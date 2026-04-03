@@ -61,7 +61,7 @@ export default async function DashboardPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-white mb-2">
-            Welcome back, {user?.firstName || 'Investor'}! 👋
+            Welcome back, {user?.firstName || 'Investor'}! 
           </h2>
           <p className="text-gray-400">Here's your portfolio overview</p>
         </div>

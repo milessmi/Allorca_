@@ -31,7 +31,7 @@ export default function Home() {
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="bg-gray-900 p-8 rounded-xl border border-green-500/20 hover:border-green-500/50 transition">
-            <div className="text-4xl mb-4">🤖</div>
+            <div className="text-4xl mb-4"></div>
             <h3 className="text-xl font-bold text-white mb-3">AI-Driven Insights</h3>
             <p className="text-gray-400">
               Claude AI explains every portfolio decision
@@ -39,7 +39,7 @@ export default function Home() {
           </div>
 
           <div className="bg-gray-900 p-8 rounded-xl border border-green-500/20 hover:border-green-500/50 transition">
-            <div className="text-4xl mb-4">📊</div>
+            <div className="text-4xl mb-4"></div>
             <h3 className="text-xl font-bold text-white mb-3">Risk Management</h3>
             <p className="text-gray-400">
               Institutional-grade risk monitoring
@@ -47,7 +47,7 @@ export default function Home() {
           </div>
 
           <div className="bg-gray-900 p-8 rounded-xl border border-green-500/20 hover:border-green-500/50 transition">
-            <div className="text-4xl mb-4">📈</div>
+            <div className="text-4xl mb-4"></div>
             <h3 className="text-xl font-bold text-white mb-3">Discipline Score</h3>
             <p className="text-gray-400">
               Track your investment maturity
@@ -82,25 +82,25 @@ export default function Home() {
     </h3>
     <div className="grid md:grid-cols-2 gap-6 text-gray-300">
       <div>
-        <h4 className="text-green-500 font-semibold mb-2">🎓 Education-First</h4>
+        <h4 className="text-green-500 font-semibold mb-2">Education-First</h4>
         <p className="text-sm">
           Unlike trading apps that encourage risky behavior, Allorca prioritizes learning before investing.
         </p>
       </div>
       <div>
-        <h4 className="text-green-500 font-semibold mb-2">📊 Discipline-Driven</h4>
+        <h4 className="text-green-500 font-semibold mb-2"> Discipline-Driven</h4>
         <p className="text-sm">
           AI-powered guardrails reduce emotional decision-making and build healthy investing habits.
         </p>
       </div>
       <div>
-        <h4 className="text-green-500 font-semibold mb-2">💰 Student-Focused</h4>
+        <h4 className="text-green-500 font-semibold mb-2"> Student-Focused</h4>
         <p className="text-sm">
           Designed for low-balance investors starting their journey, not just experienced traders.
         </p>
       </div>
       <div>
-        <h4 className="text-green-500 font-semibold mb-2">🚀 USC Built</h4>
+        <h4 className="text-green-500 font-semibold mb-2"> USC Built</h4>
         <p className="text-sm">
           Created at USC Stevens Center for Innovation, tested with real USC students.
         </p>
