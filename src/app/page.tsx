@@ -36,7 +36,10 @@ export default function Home() {
           <Link href="/sign-in" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
           <Link href="/sign-up" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1.25rem', borderRadius: '2px', textDecoration: 'none' }}>Get Started</Link>
         </div>
-        <Link className="hide-desktop" href="/sign-up" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1rem', borderRadius: '2px', textDecoration: 'none' }}>Get Started</Link>
+        <div className="hide-desktop" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+  <Link href="/sign-in" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
+  <Link href="/sign-up" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1rem', borderRadius: '2px', textDecoration: 'none' }}>Get Started</Link>
+</div>
       </nav>
 
       {/* HERO */}
