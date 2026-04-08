@@ -6,134 +6,184 @@ import Link from 'next/link'
 
 const prisma = new PrismaClient()
 
+const c = {
+  cream: '#F5F2EB',
+  ink: '#141410',
+  inkSoft: '#4a4a44',
+  inkMuted: '#8a8a80',
+  green: '#1C3D2B',
+  greenLight: '#2d6045',
+  greenPale: '#e8f0eb',
+  border: '#ddd9ce',
+}
+
+const serif = 'var(--font-serif)'
+const mono = 'var(--font-mono)'
+const sans = 'var(--font-sans)'
+
 export default async function DashboardPage() {
   const { userId } = await auth()
   const user = await currentUser()
 
-  if (!userId) {
-    redirect('/sign-in')
-  }
+  if (!userId) redirect('/sign-in')
 
-  // Get user data from database
   const dbUser = await prisma.user.findUnique({
     where: { clerkId: userId },
     include: {
       portfolios: {
         where: { isActive: true },
-        include: {
-          positions: true,
-        },
+        include: { positions: true },
       },
     },
   })
 
-  // If user hasn't completed onboarding, redirect
-  if (!dbUser?.onboardingComplete) {
-    redirect('/onboarding')
-  }
+  if (!dbUser?.onboardingComplete) redirect('/onboarding')
 
   const portfolio = dbUser.portfolios[0]
 
+  const portfolioLabel =
+    dbUser.riskScore < 35 ? 'Conservative' : dbUser.riskScore > 65 ? 'Aggressive' : 'Balanced'
+
   return (
-    <div className="min-h-screen bg-black">
-      {/* Header */}
-<header className="border-b border-gray-800 bg-gray-900">
-  <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-    <div className="flex items-center gap-8">
-      <h1 className="text-2xl font-bold text-white">Allorca</h1>
-      <nav className="flex gap-4 md:gap-6 text-sm md:text-base">
-  <Link href="/dashboard" className="text-gray-400 hover:text-white transition">
-    Dashboard
-  </Link>
-  <Link href="/portfolio" className="text-gray-400 hover:text-white transition">
-    Portfolio
-  </Link>
-  <Link href="/education" className="text-green-500 font-semibold">
-    Learn
-  </Link>
-</nav>
-    </div>
-    <UserButton afterSignOutUrl="/" />
-  </div>
-</header>
+    <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, minHeight: '100vh' }}>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">
-            Welcome back, {user?.firstName || 'Investor'}! 
-          </h2>
-          <p className="text-gray-400">Here's your portfolio overview</p>
+      {/* NAV */}
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '1.25rem 3rem',
+        background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)',
+        borderBottom: `0.5px solid ${c.border}`,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
+          <Link href="/" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>
+            Allorca
+          </Link>
+          <nav style={{ display: 'flex', gap: '2rem' }}>
+            {[
+              { label: 'Dashboard', href: '/dashboard' },
+              { label: 'Portfolio', href: '/portfolio' },
+              { label: 'Learn', href: '/education' },
+            ].map(({ label, href }) => (
+              <Link key={href} href={href} style={{
+                fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase',
+                color: c.inkSoft, textDecoration: 'none',
+              }}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <UserButton afterSignOutUrl="/" />
+      </header>
+
+      {/* PAGE HEADER */}
+      <div style={{ padding: '3rem 3rem 0', borderBottom: `0.5px solid ${c.border}` }}>
+        <p style={{ fontFamily: mono, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ display: 'block', width: '16px', height: '1px', background: c.inkMuted }} />
+          Overview
+        </p>
+        <h1 style={{ fontFamily: serif, fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, paddingBottom: '2rem' }}>
+          Welcome back, <em style={{ fontStyle: 'italic', color: c.green }}>{user?.firstName || 'Investor'}</em>
+        </h1>
+      </div>
+
+      {/* STATS ROW */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', borderBottom: `0.5px solid ${c.border}` }}>
+        {[
+          {
+            label: 'Portfolio Value',
+            value: `$${portfolio?.totalValue.toLocaleString() || '10,000'}`,
+            sub: 'Paper trading',
+          },
+          {
+            label: 'Risk Score',
+            value: `${dbUser.riskScore}/100`,
+            sub: portfolioLabel,
+          },
+          {
+            label: 'Discipline Score',
+            value: `${dbUser.disciplineScore}/100`,
+            sub: 'Building habits',
+          },
+        ].map(({ label, value, sub }, i) => (
+          <div key={label} style={{
+            padding: '2.5rem 3rem',
+            borderRight: i < 2 ? `0.5px solid ${c.border}` : 'none',
+          }}>
+            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.75rem' }}>{label}</p>
+            <p style={{ fontFamily: serif, fontSize: '2.75rem', letterSpacing: '-0.04em', lineHeight: 1, marginBottom: '0.5rem' }}>{value}</p>
+            <p style={{ fontFamily: mono, fontSize: '0.72rem', color: c.green, letterSpacing: '0.04em' }}>{sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* PORTFOLIO TYPE + DETAILS */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: `0.5px solid ${c.border}` }}>
+
+        {/* Left — portfolio type */}
+        <div style={{ padding: '3rem', borderRight: `0.5px solid ${c.border}` }}>
+          <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1.5rem' }}>Your portfolio</p>
+          <div style={{ background: c.green, padding: '2rem', borderRadius: '2px', marginBottom: '1.5rem' }}>
+            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(245,242,235,0.5)', marginBottom: '0.5rem' }}>Type</p>
+            <p style={{ fontFamily: serif, fontSize: '2rem', color: c.cream, letterSpacing: '-0.03em', marginBottom: '1rem' }}>{dbUser.portfolioType}</p>
+            <p style={{ fontFamily: mono, fontSize: '0.78rem', color: 'rgba(245,242,235,0.6)', lineHeight: 1.6 }}>
+              Based on your survey responses, we've built you a {dbUser.portfolioType.toLowerCase()} strategy tailored to your goals.
+            </p>
+          </div>
+          <Link href="/portfolio" style={{
+            display: 'inline-block', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em',
+            textTransform: 'uppercase', color: c.green, textDecoration: 'none',
+            borderBottom: `1px solid ${c.greenPale}`, paddingBottom: '2px',
+          }}>
+            View full portfolio →
+          </Link>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {/* Portfolio Value */}
-          <div className="bg-gray-900 border border-green-500/20 rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-1">Portfolio Value</p>
-            <p className="text-4xl font-bold text-white mb-2">
-              ${portfolio?.totalValue.toLocaleString() || '10,000'}
-            </p>
-            <p className="text-green-500 text-sm">Paper Trading</p>
+        {/* Right — profile details */}
+        <div style={{ padding: '3rem' }}>
+          <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1.5rem' }}>Profile details</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0' }}>
+            {[
+              { label: 'Investment Goal', value: formatGoal(dbUser.investmentGoal) },
+              { label: 'Time Horizon', value: dbUser.timeHorizon ?? 'Not set' },
+              { label: 'Experience Level', value: capitalize(dbUser.experienceLevel) },
+              { label: 'Management Style', value: capitalize(dbUser.managementPreference) },
+            ].map(({ label, value }, i) => (
+              <div key={label} style={{
+                padding: '1.25rem',
+                borderRight: i % 2 === 0 ? `0.5px solid ${c.border}` : 'none',
+                borderBottom: i < 2 ? `0.5px solid ${c.border}` : 'none',
+              }}>
+                <p style={{ fontFamily: mono, fontSize: '0.62rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.4rem' }}>{label}</p>
+                <p style={{ fontSize: '0.9rem', color: c.ink, fontWeight: 400 }}>{value}</p>
+              </div>
+            ))}
           </div>
-
-          {/* Risk Score */}
-          <div className="bg-gray-900 border border-green-500/20 rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-1">Risk Score</p>
-            <p className="text-4xl font-bold text-white mb-2">
-              {dbUser.riskScore}/100
-            </p>
-            <p className="text-gray-400 text-sm">
-              {dbUser.riskScore < 35 ? 'Conservative' : dbUser.riskScore > 65 ? 'Aggressive' : 'Moderate'}
-            </p>
-          </div>
-
-          {/* Discipline Score */}
-          <div className="bg-gray-900 border border-green-500/20 rounded-xl p-6">
-            <p className="text-gray-400 text-sm mb-1">Discipline Score</p>
-            <p className="text-4xl font-bold text-white mb-2">
-              {dbUser.disciplineScore}/100
-            </p>
-            <p className="text-gray-400 text-sm">Building habits...</p>
-          </div>
-        </div>
-
-        {/* Portfolio Type Card */}
-        <div className="bg-gray-900 border border-green-500/20 rounded-xl p-8 mb-8">
-          <h3 className="text-2xl font-bold text-white mb-4">
-            Your Portfolio: {dbUser.portfolioType}
-          </h3>
-          <p className="text-gray-300 mb-4">
-            Based on your survey responses, we've assigned you a {dbUser.portfolioType.toLowerCase()} portfolio strategy.
-          </p>
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-gray-400">Investment Goal</p>
-              <p className="text-white font-semibold">{formatGoal(dbUser.investmentGoal)}</p>
-            </div>
-            <div>
-              <p className="text-gray-400">Time Horizon</p>
-              <p className="text-white font-semibold">{dbUser.timeHorizon}</p>
-            </div>
-            <div>
-              <p className="text-gray-400">Experience Level</p>
-              <p className="text-white font-semibold capitalize">{dbUser.experienceLevel}</p>
-            </div>
-            <div>
-              <p className="text-gray-400">Management Style</p>
-              <p className="text-white font-semibold capitalize">{dbUser.managementPreference}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Coming Soon */}
-        <div className="bg-gray-900 border border-green-500/20 rounded-xl p-8 text-center">
-          <h3 className="text-2xl font-bold text-white mb-2">🚀 More Features Coming Soon</h3>
-          <p className="text-gray-400">
-            Portfolio positions, AI insights, educational courses, and automated rebalancing are on the way!
-          </p>
         </div>
       </div>
+
+      {/* QUICK LINKS */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
+        <Link href="/education" style={{
+          display: 'block', padding: '2.5rem 3rem', textDecoration: 'none', color: c.ink,
+          borderRight: `0.5px solid ${c.border}`,
+          transition: 'background 0.15s',
+        }}>
+          <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.75rem' }}>Next up</p>
+          <p style={{ fontFamily: serif, fontSize: '1.3rem', fontWeight: 400, marginBottom: '0.4rem' }}>Continue learning</p>
+          <p style={{ fontFamily: mono, fontSize: '0.75rem', color: c.inkSoft }}>Your curated lessons are ready →</p>
+        </Link>
+        <Link href="/portfolio" style={{
+          display: 'block', padding: '2.5rem 3rem', textDecoration: 'none', color: c.ink,
+          transition: 'background 0.15s',
+        }}>
+          <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.75rem' }}>Paper trading</p>
+          <p style={{ fontFamily: serif, fontSize: '1.3rem', fontWeight: 400, marginBottom: '0.4rem' }}>View your portfolio</p>
+          <p style={{ fontFamily: mono, fontSize: '0.75rem', color: c.inkSoft }}>Track positions and performance →</p>
+        </Link>
+      </div>
+
     </div>
   )
 }
@@ -147,4 +197,9 @@ function formatGoal(goal: string | null): string {
     preserve: 'Preserve capital',
   }
   return goals[goal] || goal
+}
+
+function capitalize(str: string | null): string {
+  if (!str) return 'Not set'
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }

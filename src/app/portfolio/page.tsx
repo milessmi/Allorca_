@@ -4,6 +4,23 @@ import { useState, useEffect } from 'react'
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 
+const c = {
+  cream: '#F5F2EB',
+  ink: '#141410',
+  inkSoft: '#4a4a44',
+  inkMuted: '#8a8a80',
+  green: '#1C3D2B',
+  greenLight: '#2d6045',
+  greenPale: '#e8f0eb',
+  border: '#ddd9ce',
+  red: '#8B3A3A',
+  redPale: '#f5eeee',
+}
+
+const serif = 'var(--font-serif)'
+const mono = 'var(--font-mono)'
+const sans = 'var(--font-sans)'
+
 interface Stock {
   symbol: string
   name: string
@@ -38,9 +55,7 @@ export default function PortfolioPage() {
   const [tradeMessage, setTradeMessage] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchPortfolio()
-  }, [])
+  useEffect(() => { fetchPortfolio() }, [])
 
   async function fetchPortfolio() {
     const res = await fetch('/api/portfolio')
@@ -55,10 +70,8 @@ export default function PortfolioPage() {
     setSearchError('')
     setStock(null)
     setTradeMessage('')
-
     const res = await fetch(`/api/stocks?symbol=${search.trim()}`)
     const data = await res.json()
-
     if (data.error) {
       setSearchError('Stock not found. Try a valid ticker like AAPL or TSLA.')
     } else {
@@ -70,238 +83,235 @@ export default function PortfolioPage() {
   async function executeTrade() {
     if (!stock || !portfolio) return
     setTradeLoading(true)
-    setTradeMessage(
-  `${action === 'buy' ? 'Bought' : 'Sold'} ${quantity} share${quantity > 1 ? 's' : ''} of ${stock.symbol} at $${stock.price.toFixed(2)}`
-    )
-    await new Promise(resolve => setTimeout(resolve, 500))
-    fetchPortfolio()
-
     const res = await fetch('/api/trade', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        symbol: stock.symbol,
-        name: stock.name,
-        quantity,
-        price: stock.price,
-        action,
-      }),
+      body: JSON.stringify({ symbol: stock.symbol, name: stock.name, quantity, price: stock.price, action }),
     })
-
     const data = await res.json()
-
     if (data.error) {
       setTradeMessage(data.error)
     } else {
-      setTradeMessage(
-        `${action === 'buy' ? 'Bought' : 'Sold'} ${quantity} share${quantity > 1 ? 's' : ''} of ${stock.symbol} at $${stock.price.toFixed(2)}`
-      )
+      setTradeMessage(`${action === 'buy' ? 'Bought' : 'Sold'} ${quantity} share${quantity > 1 ? 's' : ''} of ${stock.symbol} at $${stock.price.toFixed(2)}`)
       fetchPortfolio()
     }
     setTradeLoading(false)
   }
 
-  const totalInvested = portfolio?.positions.reduce(
-    (sum, p) => sum + p.quantity * p.averageCost,
-    0
-  ) ?? 0
-
-  const currentValue = portfolio?.positions.reduce(
-    (sum, p) => sum + p.quantity * p.currentPrice,
-    0
-  ) ?? 0
-
+  const totalInvested = portfolio?.positions.reduce((sum, p) => sum + p.quantity * p.averageCost, 0) ?? 0
+  const currentValue = portfolio?.positions.reduce((sum, p) => sum + p.quantity * p.currentPrice, 0) ?? 0
   const totalPnL = currentValue - totalInvested
   const cashBalance = portfolio?.totalValue ?? 0
   const totalPortfolioValue = cashBalance + currentValue
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-8">
-            <Link href="/dashboard">
-              <h1 className="text-2xl font-bold text-white">Allorca</h1>
-            </Link>
-            <nav className="flex gap-4 md:gap-6 text-sm md:text-base">
-              <Link href="/dashboard" className="text-gray-400 hover:text-white transition">Dashboard</Link>
-              <Link href="/portfolio" className="text-green-500 font-semibold">Portfolio</Link>
-              <Link href="/education" className="text-gray-400 hover:text-white transition">Learn</Link>
-            </nav>
-          </div>
-          <UserButton afterSignOutUrl="/" />
+    <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, minHeight: '100vh' }}>
+
+      {/* NAV */}
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '1.25rem 3rem',
+        background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)',
+        borderBottom: `0.5px solid ${c.border}`,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
+          <Link href="/" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>
+            Allorca
+          </Link>
+          <nav style={{ display: 'flex', gap: '2rem' }}>
+            {[
+              { label: 'Dashboard', href: '/dashboard' },
+              { label: 'Portfolio', href: '/portfolio', active: true },
+              { label: 'Learn', href: '/education' },
+            ].map(({ label, href, active }) => (
+              <Link key={href} href={href} style={{
+                fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase',
+                color: active ? c.green : c.inkSoft, textDecoration: 'none',
+                borderBottom: active ? `1px solid ${c.green}` : 'none', paddingBottom: active ? '2px' : '0',
+              }}>
+                {label}
+              </Link>
+            ))}
+          </nav>
         </div>
+        <UserButton afterSignOutUrl="/" />
       </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-1">Paper Trading</h2>
-          <p className="text-gray-400">Practice investing with $10,000 of virtual money</p>
-        </div>
+      {/* PAGE HEADER */}
+      <div style={{ padding: '3rem 3rem 0', borderBottom: `0.5px solid ${c.border}` }}>
+        <p style={{ fontFamily: mono, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ display: 'block', width: '16px', height: '1px', background: c.inkMuted }} />
+          Paper trading
+        </p>
+        <h1 style={{ fontFamily: serif, fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, paddingBottom: '2rem' }}>
+          Your <em style={{ fontStyle: 'italic', color: c.green }}>portfolio</em>
+        </h1>
+      </div>
 
-        {loading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-900 rounded-2xl animate-pulse border border-gray-800" />
+      {loading ? (
+        <div style={{ padding: '3rem', display: 'grid', gap: '1px', gridTemplateColumns: 'repeat(3,1fr)', background: c.border }}>
+          {[...Array(3)].map((_, i) => (
+            <div key={i} style={{ height: '120px', background: c.cream, opacity: 0.6 }} />
+          ))}
+        </div>
+      ) : (
+        <>
+          {/* STATS ROW */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', borderBottom: `0.5px solid ${c.border}` }}>
+            {[
+              { label: 'Total Value', value: `$${totalPortfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, positive: true },
+              { label: 'Cash Balance', value: `$${cashBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, positive: true },
+              { label: 'Unrealized P&L', value: `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, positive: totalPnL >= 0 },
+            ].map(({ label, value, positive }, i) => (
+              <div key={label} style={{ padding: '2.5rem 3rem', borderRight: i < 2 ? `0.5px solid ${c.border}` : 'none' }}>
+                <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.75rem' }}>{label}</p>
+                <p style={{ fontFamily: serif, fontSize: '2.25rem', letterSpacing: '-0.04em', lineHeight: 1, color: label === 'Unrealized P&L' ? (positive ? c.green : c.red) : c.ink }}>
+                  {value}
+                </p>
+              </div>
             ))}
           </div>
-        ) : (
-          <div className="grid lg:grid-cols-3 gap-6">
 
-            {/* Left Column — Search + Trade */}
-            <div className="lg:col-span-2 space-y-6">
+          {/* MAIN GRID */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: `0.5px solid ${c.border}` }}>
 
-              {/* Portfolio Summary */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5">
-                  <p className="text-gray-400 text-sm mb-1">Total Value</p>
-                  <p className="text-2xl font-bold text-white">${totalPortfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-                <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5">
-                  <p className="text-gray-400 text-sm mb-1">Cash Balance</p>
-                  <p className="text-2xl font-bold text-white">${cashBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-                <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5">
-                  <p className="text-gray-400 text-sm mb-1">Unrealized P&L</p>
-                  <p className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {totalPnL >= 0 ? '+' : ''}${totalPnL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                </div>
-              </div>
-
-              {/* Stock Search */}
-              <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6">
-                <h3 className="text-white font-bold mb-4">Search Stock</h3>
-                <div className="flex gap-3 mb-4">
+            {/* LEFT — Search + Trade */}
+            <div style={{ borderRight: `0.5px solid ${c.border}` }}>
+              <div style={{ padding: '2rem 3rem', borderBottom: `0.5px solid ${c.border}` }}>
+                <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Search stock</p>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
                   <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value.toUpperCase())}
                     onKeyDown={(e) => e.key === 'Enter' && searchStock()}
-                    placeholder="Enter ticker (e.g. AAPL)"
-                    className="flex-1 bg-gray-800 text-white rounded-xl px-4 py-3 border border-gray-700 focus:border-green-500/50 outline-none placeholder-gray-500"
+                    placeholder="Ticker (e.g. AAPL)"
+                    style={{
+                      flex: 1, background: 'white', color: c.ink, fontFamily: mono, fontSize: '0.85rem',
+                      padding: '0.75rem 1rem', border: `0.5px solid ${c.border}`, borderRadius: '2px', outline: 'none',
+                    }}
                   />
                   <button
                     onClick={searchStock}
                     disabled={searchLoading}
-                    className="bg-green-500 hover:bg-green-400 text-black font-bold px-6 py-3 rounded-xl transition disabled:opacity-40"
+                    style={{
+                      background: c.green, color: c.cream, fontFamily: mono, fontSize: '0.75rem',
+                      letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.75rem 1.5rem',
+                      border: 'none', borderRadius: '2px', cursor: 'pointer', opacity: searchLoading ? 0.5 : 1,
+                    }}
                   >
                     {searchLoading ? '...' : 'Search'}
                   </button>
                 </div>
-
-                {searchError && <p className="text-red-400 text-sm">{searchError}</p>}
-
-                {stock && (
-                  <div className="border border-gray-700 rounded-xl p-5 space-y-4">
-                    {/* Stock Info */}
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="text-white font-bold text-xl">{stock.symbol}</h4>
-                        <p className="text-gray-400 text-sm">{stock.name}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-white font-bold text-2xl">${stock.price.toFixed(2)}</p>
-                        <p className={`text-sm font-medium ${stock.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {stock.change >= 0 ? '+' : ''}{stock.change?.toFixed(2)} ({stock.changePercent?.toFixed(2)}%)
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Buy/Sell Toggle */}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setAction('buy')}
-                        className={`flex-1 py-2 rounded-lg font-semibold text-sm transition ${action === 'buy' ? 'bg-green-500 text-black' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
-                      >
-                        Buy
-                      </button>
-                      <button
-                        onClick={() => setAction('sell')}
-                        className={`flex-1 py-2 rounded-lg font-semibold text-sm transition ${action === 'sell' ? 'bg-red-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
-                      >
-                        Sell
-                      </button>
-                    </div>
-
-                    {/* Quantity */}
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="w-9 h-9 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold transition"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        min={1}
-                        value={quantity}
-                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                        className="flex-1 bg-gray-800 text-white text-center rounded-lg px-4 py-2 border border-gray-700 outline-none"
-                      />
-                      <button
-                        onClick={() => setQuantity(quantity + 1)}
-                        className="w-9 h-9 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold transition"
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm text-gray-400">
-                      <span>Total {action === 'buy' ? 'cost' : 'proceeds'}</span>
-                      <span className="text-white font-semibold">${(quantity * stock.price).toFixed(2)}</span>
-                    </div>
-
-                    <button
-                      onClick={executeTrade}
-                      disabled={tradeLoading}
-                      className={`w-full py-3 rounded-xl font-bold transition disabled:opacity-40 ${
-                        action === 'buy'
-                          ? 'bg-green-500 hover:bg-green-400 text-black'
-                          : 'bg-red-500 hover:bg-red-400 text-white'
-                      }`}
-                    >
-                      {tradeLoading ? 'Processing...' : `${action === 'buy' ? 'Buy' : 'Sell'} ${stock.symbol}`}
-                    </button>
-
-                    {tradeMessage && (
-                      <p className={`text-sm text-center ${tradeMessage.includes('Bought') || tradeMessage.includes('Sold') ? 'text-green-400' : 'text-red-400'}`}>
-                        {tradeMessage}
-                      </p>
-                    )}
-                  </div>
+                {searchError && (
+                  <p style={{ fontFamily: mono, fontSize: '0.72rem', color: c.red, marginTop: '0.75rem' }}>{searchError}</p>
                 )}
               </div>
+
+              {stock && (
+                <div style={{ padding: '2rem 3rem' }}>
+                  {/* Stock info */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: `0.5px solid ${c.border}` }}>
+                    <div>
+                      <p style={{ fontFamily: serif, fontSize: '1.75rem', letterSpacing: '-0.03em', marginBottom: '0.25rem' }}>{stock.symbol}</p>
+                      <p style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted }}>{stock.name}</p>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <p style={{ fontFamily: serif, fontSize: '1.75rem', letterSpacing: '-0.03em', marginBottom: '0.25rem' }}>${stock.price.toFixed(2)}</p>
+                      <p style={{ fontFamily: mono, fontSize: '0.72rem', color: stock.change >= 0 ? c.green : c.red }}>
+                        {stock.change >= 0 ? '+' : ''}{stock.change?.toFixed(2)} ({stock.changePercent?.toFixed(2)}%)
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Buy/Sell toggle */}
+                  <div style={{ display: 'flex', gap: '0', marginBottom: '1.5rem', border: `0.5px solid ${c.border}`, borderRadius: '2px', overflow: 'hidden' }}>
+                    {(['buy', 'sell'] as const).map((a) => (
+                      <button key={a} onClick={() => setAction(a)} style={{
+                        flex: 1, padding: '0.65rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em',
+                        textTransform: 'uppercase', border: 'none', cursor: 'pointer',
+                        background: action === a ? (a === 'buy' ? c.green : c.red) : 'white',
+                        color: action === a ? c.cream : c.inkMuted,
+                      }}>
+                        {a}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Quantity */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ width: '36px', height: '36px', background: 'white', border: `0.5px solid ${c.border}`, borderRadius: '2px', cursor: 'pointer', fontFamily: mono, fontSize: '1rem', color: c.ink }}>−</button>
+                    <input
+                      type="number" min={1} value={quantity}
+                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      style={{ flex: 1, textAlign: 'center', fontFamily: mono, fontSize: '0.9rem', color: c.ink, background: 'white', border: `0.5px solid ${c.border}`, borderRadius: '2px', padding: '0.5rem', outline: 'none' }}
+                    />
+                    <button onClick={() => setQuantity(quantity + 1)} style={{ width: '36px', height: '36px', background: 'white', border: `0.5px solid ${c.border}`, borderRadius: '2px', cursor: 'pointer', fontFamily: mono, fontSize: '1rem', color: c.ink }}>+</button>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                    <span style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted }}>Total {action === 'buy' ? 'cost' : 'proceeds'}</span>
+                    <span style={{ fontFamily: mono, fontSize: '0.72rem', color: c.ink, fontWeight: 500 }}>${(quantity * stock.price).toFixed(2)}</span>
+                  </div>
+
+                  <button
+                    onClick={executeTrade}
+                    disabled={tradeLoading}
+                    style={{
+                      width: '100%', padding: '0.85rem', fontFamily: mono, fontSize: '0.8rem',
+                      letterSpacing: '0.06em', textTransform: 'uppercase', border: 'none', borderRadius: '2px',
+                      cursor: 'pointer', opacity: tradeLoading ? 0.5 : 1,
+                      background: action === 'buy' ? c.green : c.red, color: c.cream,
+                    }}
+                  >
+                    {tradeLoading ? 'Processing...' : `${action === 'buy' ? 'Buy' : 'Sell'} ${stock.symbol}`}
+                  </button>
+
+                  {tradeMessage && (
+                    <p style={{ fontFamily: mono, fontSize: '0.72rem', textAlign: 'center', marginTop: '0.75rem', color: tradeMessage.includes('Bought') || tradeMessage.includes('Sold') ? c.green : c.red }}>
+                      {tradeMessage}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {!stock && !searchError && (
+                <div style={{ padding: '3rem', textAlign: 'center' }}>
+                  <p style={{ fontFamily: mono, fontSize: '0.75rem', color: c.inkMuted }}>Search a ticker above to start trading</p>
+                </div>
+              )}
             </div>
 
-            {/* Right Column — Holdings */}
-            <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6">
-              <h3 className="text-white font-bold mb-4">Holdings</h3>
+            {/* RIGHT — Holdings */}
+            <div style={{ padding: '2rem 3rem' }}>
+              <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1.5rem' }}>Holdings</p>
               {portfolio?.positions.length === 0 ? (
-                <p className="text-gray-500 text-sm text-center mt-8">No positions yet. Search a stock and make your first trade.</p>
+                <div style={{ padding: '3rem 0', textAlign: 'center' }}>
+                  <p style={{ fontFamily: mono, fontSize: '0.78rem', color: c.inkMuted, lineHeight: 1.7 }}>No positions yet.<br />Search a stock and make your first trade.</p>
+                </div>
               ) : (
-                <div className="space-y-3">
-                  {portfolio?.positions.map((position) => {
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                  {portfolio?.positions.map((position, i) => {
                     const pnl = (position.currentPrice - position.averageCost) * position.quantity
                     const pnlPct = ((position.currentPrice - position.averageCost) / position.averageCost) * 100
                     return (
-                      <div key={position.id} className="border border-gray-700 rounded-xl p-4">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-white font-bold">{position.symbol}</span>
-                          <span className={`text-sm font-semibold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <div key={position.id} style={{ padding: '1.25rem 0', borderBottom: i < (portfolio?.positions.length ?? 0) - 1 ? `0.5px solid ${c.border}` : 'none' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.4rem' }}>
+                          <span style={{ fontFamily: serif, fontSize: '1.1rem', letterSpacing: '-0.02em' }}>{position.symbol}</span>
+                          <span style={{ fontFamily: mono, fontSize: '0.78rem', color: pnl >= 0 ? c.green : c.red, fontWeight: 500 }}>
                             {pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between text-xs text-gray-400">
-                          <span>{position.quantity} shares @ ${position.averageCost.toFixed(2)}</span>
-                          <span className={pnlPct >= 0 ? 'text-green-400' : 'text-red-400'}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ fontFamily: mono, fontSize: '0.68rem', color: c.inkMuted }}>{position.quantity} shares @ ${position.averageCost.toFixed(2)}</span>
+                          <span style={{ fontFamily: mono, fontSize: '0.68rem', color: pnlPct >= 0 ? c.green : c.red }}>
                             {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(2)}%
                           </span>
                         </div>
-                        <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
-                          <span>Current: ${position.currentPrice.toFixed(2)}</span>
-                          <span>Value: ${(position.quantity * position.currentPrice).toFixed(2)}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem' }}>
+                          <span style={{ fontFamily: mono, fontSize: '0.65rem', color: c.inkMuted }}>Current: ${position.currentPrice.toFixed(2)}</span>
+                          <span style={{ fontFamily: mono, fontSize: '0.65rem', color: c.inkMuted }}>Value: ${(position.quantity * position.currentPrice).toFixed(2)}</span>
                         </div>
                       </div>
                     )
@@ -309,10 +319,9 @@ export default function PortfolioPage() {
                 </div>
               )}
             </div>
-
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   )
 }

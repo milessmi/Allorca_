@@ -2,6 +2,23 @@
 
 import { useState } from 'react'
 
+const c = {
+  cream: '#F5F2EB',
+  ink: '#141410',
+  inkSoft: '#4a4a44',
+  inkMuted: '#8a8a80',
+  green: '#1C3D2B',
+  greenLight: '#2d6045',
+  greenPale: '#e8f0eb',
+  border: '#ddd9ce',
+  red: '#8B3A3A',
+  redPale: '#f5eeee',
+}
+
+const serif = 'var(--font-serif)'
+const mono = 'var(--font-mono)'
+const sans = 'var(--font-sans)'
+
 type Quiz = {
   question: string
   options: string[]
@@ -13,9 +30,8 @@ export default function InteractiveQuiz({ quiz }: { quiz: Quiz }) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showExplanation, setShowExplanation] = useState(false)
 
-  const handleAnswerClick = (index: number) => {
-    if (selectedAnswer !== null) return // Already answered
-    
+  function handleAnswerClick(index: number) {
+    if (selectedAnswer !== null) return
     setSelectedAnswer(index)
     setShowExplanation(true)
   }
@@ -24,83 +40,70 @@ export default function InteractiveQuiz({ quiz }: { quiz: Quiz }) {
   const hasAnswered = selectedAnswer !== null
 
   return (
-    <div className="p-6 bg-gray-800/50 border-t border-gray-700">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-2xl">✅</span>
-        <h4 className="text-white font-semibold">Knowledge Check</h4>
-      </div>
-      
-      <p className="text-gray-300 mb-4 text-lg">{quiz.question}</p>
-      
-      <div className="space-y-3 mb-4">
+    <div style={{ padding: '2rem', background: '#faf8f3', borderTop: `0.5px solid ${c.border}` }}>
+      <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>
+        Knowledge check
+      </p>
+      <p style={{ fontFamily: sans, fontSize: '1rem', color: c.ink, marginBottom: '1.25rem', lineHeight: 1.6 }}>
+        {quiz.question}
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: c.border, marginBottom: '1rem' }}>
         {quiz.options.map((option, index) => {
           const isSelected = selectedAnswer === index
           const isCorrectOption = index === quiz.correctAnswer
-          
-          let borderColor = 'border-gray-700'
-          let bgColor = 'bg-gray-900'
-          let textColor = 'text-gray-300'
-          
+
+          let bg = c.cream
+          let textColor = c.inkSoft
+          let borderLeft = 'none'
+
           if (hasAnswered) {
             if (isCorrectOption) {
-              borderColor = 'border-green-500'
-              bgColor = 'bg-green-500/10'
-              textColor = 'text-green-400'
+              bg = c.greenPale
+              textColor = c.green
+              borderLeft = `3px solid ${c.green}`
             } else if (isSelected && !isCorrect) {
-              borderColor = 'border-red-500'
-              bgColor = 'bg-red-500/10'
-              textColor = 'text-red-400'
+              bg = c.redPale
+              textColor = c.red
+              borderLeft = `3px solid ${c.red}`
             }
-          } else if (isSelected) {
-            borderColor = 'border-green-500/50'
           }
-          
+
           return (
             <button
               key={index}
               onClick={() => handleAnswerClick(index)}
               disabled={hasAnswered}
-              className={`w-full p-4 ${bgColor} border-2 ${borderColor} rounded-lg ${textColor} 
-                         hover:border-green-500/50 transition-all duration-300 text-left
-                         ${!hasAnswered ? 'cursor-pointer' : 'cursor-default'}
-                         ${isSelected && !hasAnswered ? 'ring-2 ring-green-500/20' : ''}
-                         disabled:cursor-not-allowed relative group`}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '1rem 1.25rem', background: bg, border: 'none',
+                borderLeft, cursor: hasAnswered ? 'default' : 'pointer', textAlign: 'left',
+              }}
             >
-              <div className="flex items-center justify-between">
-                <span className="flex-1">{option}</span>
-                {hasAnswered && isCorrectOption && (
-                  <span className="text-green-500 text-xl ml-2">✓</span>
-                )}
-                {hasAnswered && isSelected && !isCorrect && (
-                  <span className="text-red-500 text-xl ml-2">✗</span>
-                )}
-              </div>
+              <span style={{ fontFamily: sans, fontSize: '0.9rem', color: textColor, lineHeight: 1.5 }}>{option}</span>
+              {hasAnswered && isCorrectOption && (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.green} strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+              )}
+              {hasAnswered && isSelected && !isCorrect && (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c.red} strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12" /></svg>
+              )}
             </button>
           )
         })}
       </div>
-      
+
       {showExplanation && (
-        <div className={`p-4 rounded-lg border-2 animate-fadeIn ${
-          isCorrect 
-            ? 'bg-green-500/10 border-green-500/30' 
-            : 'bg-orange-500/10 border-orange-500/30'
-        }`}>
-          <div className="flex items-start gap-3">
-            <span className="text-2xl flex-shrink-0">
-              {isCorrect ? '🎉' : '💡'}
-            </span>
-            <div>
-              <p className={`font-semibold mb-2 ${
-                isCorrect ? 'text-green-400' : 'text-orange-400'
-              }`}>
-                {isCorrect ? 'Correct!' : 'Not quite!'}
-              </p>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                {quiz.explanation}
-              </p>
-            </div>
-          </div>
+        <div style={{
+          padding: '1.25rem', borderRadius: '2px',
+          background: isCorrect ? c.greenPale : c.redPale,
+          borderLeft: `3px solid ${isCorrect ? c.green : c.red}`,
+        }}>
+          <p style={{ fontFamily: mono, fontSize: '0.72rem', fontWeight: 500, color: isCorrect ? c.green : c.red, marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
+            {isCorrect ? 'Correct' : 'Not quite'}
+          </p>
+          <p style={{ fontFamily: sans, fontSize: '0.875rem', color: c.inkSoft, lineHeight: 1.7 }}>
+            {quiz.explanation}
+          </p>
         </div>
       )}
     </div>

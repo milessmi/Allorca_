@@ -3,6 +3,21 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
+const c = {
+  cream: '#F5F2EB',
+  ink: '#141410',
+  inkSoft: '#4a4a44',
+  inkMuted: '#8a8a80',
+  green: '#1C3D2B',
+  greenLight: '#2d6045',
+  greenPale: '#e8f0eb',
+  border: '#ddd9ce',
+}
+
+const serif = 'var(--font-serif)'
+const mono = 'var(--font-mono)'
+const sans = 'var(--font-sans)'
+
 interface Lesson {
   id: string
   title: string
@@ -16,11 +31,11 @@ interface Props {
 }
 
 const TIERS = [
-  { name: 'Beginner', min: 0, color: 'text-gray-400', bg: 'bg-gray-700' },
-  { name: 'Student', min: 20, color: 'text-blue-400', bg: 'bg-blue-500/20' },
-  { name: 'Investor', min: 40, color: 'text-green-400', bg: 'bg-green-500/20' },
-  { name: 'Veteran', min: 60, color: 'text-purple-400', bg: 'bg-purple-500/20' },
-  { name: 'Expert', min: 80, color: 'text-amber-400', bg: 'bg-amber-500/20' },
+  { name: 'Beginner', min: 0 },
+  { name: 'Student', min: 20 },
+  { name: 'Investor', min: 40 },
+  { name: 'Veteran', min: 60 },
+  { name: 'Expert', min: 80 },
 ]
 
 function getTier(score: number) {
@@ -49,7 +64,6 @@ export default function CourseProgress({ courseId, courseName, lessons }: Props)
         if (record) {
           setStarted(true)
           setCourseCompleted(record.completed)
-          // Reconstruct completed lessons from progress percentage
           const count = Math.round((record.progress / 100) * lessons.length)
           setCompletedLessons(new Set(Array.from({ length: count }, (_, i) => i)))
         }
@@ -78,13 +92,8 @@ export default function CourseProgress({ courseId, courseName, lessons }: Props)
   function toggleLesson(index: number) {
     if (!started || courseCompleted) return
     const next = new Set(completedLessons)
-    if (next.has(index)) {
-      next.delete(index)
-    } else {
-      next.add(index)
-    }
+    next.has(index) ? next.delete(index) : next.add(index)
     setCompletedLessons(next)
-
     const finished = next.size === lessons.length
     if (finished) setCourseCompleted(true)
     saveProgress(next, finished)
@@ -100,57 +109,55 @@ export default function CourseProgress({ courseId, courseName, lessons }: Props)
   const progressPct = Math.round((completedLessons.size / lessons.length) * 100)
 
   if (loading) {
-    return <div className="h-32 bg-gray-900 rounded-2xl animate-pulse border border-gray-800" />
+    return <div style={{ height: '80px', background: c.greenPale, borderRadius: '2px', opacity: 0.5 }} />
   }
 
   return (
-    <div className="space-y-4 mb-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: c.border }}>
 
-      {/* Discipline Score + Tier */}
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <span className={`text-sm font-bold px-3 py-1 rounded-full ${tier.bg} ${tier.color}`}>
+      {/* Score + start/progress */}
+      <div style={{ background: c.cream, padding: '1.5rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.08em', textTransform: 'uppercase', background: c.greenPale, color: c.green, padding: '0.2rem 0.6rem', borderRadius: '2px' }}>
               {tier.name}
             </span>
-            {saving && <span className="text-xs text-gray-500">Saving...</span>}
+            {saving && <span style={{ fontFamily: mono, fontSize: '0.62rem', color: c.inkMuted }}>Saving...</span>}
           </div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-gray-400 text-sm">Discipline Score</span>
-            <span className="text-white font-bold">{disciplineScore}/100</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <span style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted }}>Discipline score</span>
+            <span style={{ fontFamily: mono, fontSize: '0.72rem', color: c.ink, fontWeight: 500 }}>{disciplineScore}/100</span>
           </div>
-          <div className="w-full bg-gray-800 rounded-full h-2">
-            <div
-              className="bg-green-500 h-2 rounded-full transition-all duration-700"
-              style={{ width: `${disciplineScore}%` }}
-            />
+          <div style={{ width: '200px', height: '3px', background: c.border, borderRadius: '2px', overflow: 'hidden' }}>
+            <div style={{ width: `${disciplineScore}%`, height: '100%', background: c.green, borderRadius: '2px', transition: 'width 0.7s ease' }} />
           </div>
           {nextTier && (
-            <p className="text-gray-500 text-xs mt-1">
+            <p style={{ fontFamily: mono, fontSize: '0.62rem', color: c.inkMuted, marginTop: '0.3rem' }}>
               {nextTier.min - disciplineScore} points to {nextTier.name}
             </p>
           )}
         </div>
 
         {!started ? (
-          <button
-            onClick={handleStart}
-            className="bg-green-500 hover:bg-green-400 text-black font-bold px-6 py-3 rounded-xl transition flex-shrink-0"
-          >
-            Start Course
+          <button onClick={handleStart} style={{
+            background: c.green, color: c.cream, fontFamily: mono, fontSize: '0.75rem',
+            letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.85rem 1.75rem',
+            border: 'none', borderRadius: '2px', cursor: 'pointer', flexShrink: 0,
+          }}>
+            Start course
           </button>
         ) : courseCompleted ? (
-          <span className="text-green-400 font-bold text-sm flex-shrink-0">Course Complete</span>
+          <span style={{ fontFamily: mono, fontSize: '0.72rem', color: c.green, letterSpacing: '0.04em' }}>Course complete</span>
         ) : (
-          <span className="text-gray-400 text-sm flex-shrink-0">{progressPct}% complete</span>
+          <span style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted }}>{progressPct}% complete</span>
         )}
       </div>
 
-      {/* Lesson Checklist */}
+      {/* Lesson checklist */}
       {started && (
-        <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6">
-          <h4 className="text-white font-semibold mb-4">Lesson Progress</h4>
-          <div className="space-y-2">
+        <div style={{ background: c.cream, padding: '1.5rem 2rem' }}>
+          <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Lesson progress</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: c.border }}>
             {lessons.map((lesson, index) => {
               const done = completedLessons.has(index)
               return (
@@ -158,62 +165,62 @@ export default function CourseProgress({ courseId, courseName, lessons }: Props)
                   key={lesson.id}
                   onClick={() => toggleLesson(index)}
                   disabled={courseCompleted}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl border transition text-left ${
-                    done
-                      ? 'bg-green-500/10 border-green-500/30'
-                      : 'bg-gray-800/50 border-gray-700 hover:border-gray-500'
-                  }`}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.25rem',
+                    background: done ? c.greenPale : c.cream,
+                    border: 'none', cursor: courseCompleted ? 'default' : 'pointer', textAlign: 'left',
+                  }}
                 >
-                  <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
-                    done ? 'bg-green-500 border-green-500' : 'border-gray-500'
-                  }`}>
+                  <div style={{
+                    width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0,
+                    border: `1.5px solid ${done ? c.green : c.border}`,
+                    background: done ? c.green : 'transparent',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
                     {done && (
-                      <svg className="w-3 h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={c.cream} strokeWidth="3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     )}
                   </div>
-                  <span className={`flex-1 text-sm font-medium ${done ? 'text-green-400' : 'text-gray-300'}`}>
+                  <span style={{ flex: 1, fontFamily: sans, fontSize: '0.875rem', color: done ? c.green : c.inkSoft, fontWeight: done ? 400 : 300 }}>
                     {lesson.title}
                   </span>
-                  <span className="text-gray-500 text-xs">{lesson.duration}</span>
+                  <span style={{ fontFamily: mono, fontSize: '0.65rem', color: c.inkMuted }}>{lesson.duration}</span>
                 </button>
               )
             })}
           </div>
-
-          {/* Progress bar */}
-          <div className="mt-4">
-            <div className="w-full bg-gray-800 rounded-full h-1.5">
-              <div
-                className="bg-green-500 h-1.5 rounded-full transition-all duration-500"
-                style={{ width: `${progressPct}%` }}
-              />
+          <div style={{ marginTop: '1rem' }}>
+            <div style={{ width: '100%', height: '2px', background: c.border, borderRadius: '2px', overflow: 'hidden' }}>
+              <div style={{ width: `${progressPct}%`, height: '100%', background: c.green, transition: 'width 0.5s ease' }} />
             </div>
-            <p className="text-gray-500 text-xs mt-1">{completedLessons.size} of {lessons.length} lessons complete</p>
+            <p style={{ fontFamily: mono, fontSize: '0.62rem', color: c.inkMuted, marginTop: '0.4rem' }}>
+              {completedLessons.size} of {lessons.length} lessons complete
+            </p>
           </div>
         </div>
       )}
 
-      {/* Celebration Banner */}
+      {/* Celebration */}
       {showCelebration && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-6 text-center">
-          <h3 className="text-2xl font-bold text-white mb-1">Course Complete</h3>
-          <p className="text-green-400 font-semibold mb-1">+{awardedPoints} discipline points earned</p>
-          <p className="text-gray-400 text-sm mb-4">
-            You are now a <span className="text-white font-semibold">{tier.name}</span>
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Link
-              href="/education"
-              className="bg-green-500 hover:bg-green-400 text-black font-bold px-6 py-2.5 rounded-xl transition text-sm"
-            >
-              Browse More Courses
+        <div style={{ background: c.greenPale, padding: '2rem', textAlign: 'center' }}>
+          <p style={{ fontFamily: serif, fontSize: '1.5rem', fontWeight: 400, color: c.green, letterSpacing: '-0.02em', marginBottom: '0.4rem' }}>Course complete</p>
+          <p style={{ fontFamily: mono, fontSize: '0.75rem', color: c.greenLight, marginBottom: '0.25rem' }}>+{awardedPoints} discipline points earned</p>
+          <p style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted, marginBottom: '1.5rem' }}>You are now a {tier.name}</p>
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+            <Link href="/education" style={{
+              background: c.green, color: c.cream, fontFamily: mono, fontSize: '0.72rem',
+              letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.75rem 1.5rem',
+              borderRadius: '2px', textDecoration: 'none',
+            }}>
+              More courses
             </Link>
-            <button
-              onClick={() => setShowCelebration(false)}
-              className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2.5 rounded-xl transition text-sm border border-gray-700"
-            >
+            <button onClick={() => setShowCelebration(false)} style={{
+              background: 'white', color: c.inkSoft, fontFamily: mono, fontSize: '0.72rem',
+              letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0.75rem 1.5rem',
+              border: `0.5px solid ${c.border}`, borderRadius: '2px', cursor: 'pointer',
+            }}>
               Dismiss
             </button>
           </div>
