@@ -45,16 +45,18 @@ Format it as a JSON array with exactly 5 objects, each with:
 - description (1-2 sentences explaining what they'll learn and why it matters for their profile)
 - priority ("start here" | "recommended" | "advanced")
 
-Return ONLY the JSON array, no other text.`,
+Return ONLY the JSON array, no markdown, no code blocks, no other text. Just the raw JSON array starting with [ and ending with ].`,
         },
       ],
     })
 
     const text = response.content[0].type === 'text' ? response.content[0].text : ''
     try {
-      const outline = JSON.parse(text)
+      const cleaned = text.replace(/```json|```/g, '').trim()
+      const outline = JSON.parse(cleaned)
       return NextResponse.json({ outline })
     } catch {
+      console.error('Failed to parse outline:', text)
       return NextResponse.json({ error: 'Failed to parse outline' }, { status: 500 })
     }
   }
