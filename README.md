@@ -1,7 +1,7 @@
 Allorca
 AI-powered investment education platform for first-time investors.
 Built for USC students and Gen Z users with no finance background. Allorca personalizes your learning path based on your risk profile — so you're not reading the same generic content as everyone else.
-🔗 Live: https://markets-app.vercel.app ← replace with your actual URL
+🔗 Live: https://markets-app.vercel.app 
 
 What It Does
 Most investment education platforms dump the same content on every user. Allorca is different — it starts by understanding you.
