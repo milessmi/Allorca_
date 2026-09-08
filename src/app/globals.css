@@ -37,7 +37,7 @@ body {
 /* Responsive grid utilities */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); }
-.grid-hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; padding-top: 5rem; }
+.grid-hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; padding-top: 1.5rem; }
 .grid-how { display: grid; grid-template-columns: 1fr 2fr; }
 .grid-portfolio { display: grid; grid-template-columns: 1fr 1fr; }
 
@@ -50,7 +50,7 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .grid-hero { min-height: auto; padding-top: 4rem; }
+  .grid-hero { min-height: auto; padding-top: 1rem; }
   .hide-mobile { display: none !important; }
   .page-pad { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
   .border-right-mobile { border-right: none !important; border-bottom: 0.5px solid #ddd9ce !important; }

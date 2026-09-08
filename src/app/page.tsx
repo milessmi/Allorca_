@@ -19,9 +19,22 @@ export default function Home() {
   return (
     <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, overflowX: 'hidden' }}>
 
+      {/* DEMO NOTICE */}
+      <div style={{
+        background: c.ink, color: c.cream, padding: '0.7rem 1.5rem',
+        fontFamily: mono, fontSize: '0.72rem', lineHeight: 1.6, letterSpacing: '0.02em',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        gap: '0.5rem', flexWrap: 'wrap', textAlign: 'center',
+      }}>
+        <span>Portfolio demo. Built by Miles Smith in 2026. Not an active product and not accepting users.</span>
+        <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ color: c.cream, textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+          View the source
+        </a>
+      </div>
+
       {/* NAV */}
       <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        position: 'sticky', top: 0, zIndex: 100,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '1.25rem 1.5rem',
         background: 'rgba(245,242,235,0.88)', backdropFilter: 'blur(12px)',
@@ -34,11 +47,11 @@ export default function Home() {
           <Link href="#how" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>How it works</Link>
           <Link href="/education" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Learn</Link>
           <Link href="/sign-in" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
-          <Link href="/sign-up" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1.25rem', borderRadius: '2px', textDecoration: 'none' }}>Get Started</Link>
+          <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1.25rem', borderRadius: '2px', textDecoration: 'none' }}>View code</a>
         </div>
         <div className="hide-desktop" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
   <Link href="/sign-in" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
-  <Link href="/sign-up" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1rem', borderRadius: '2px', textDecoration: 'none' }}>Get Started</Link>
+  <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1rem', borderRadius: '2px', textDecoration: 'none' }}>View code</a>
 </div>
       </nav>
 
@@ -57,7 +70,7 @@ export default function Home() {
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
             <Link href="/sign-up" style={{ background: c.green, color: c.cream, padding: '0.85rem 2rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', display: 'inline-block' }}>
-              Start for free
+              Try the demo
             </Link>
             <Link href="#how" style={{ fontSize: '0.875rem', color: c.inkSoft, textDecoration: 'none', borderBottom: `1px solid ${c.border}`, paddingBottom: '2px' }}>
               See how it works
@@ -131,21 +144,21 @@ export default function Home() {
 
       {/* BETA DISCLAIMER */}
       <div style={{ borderTop: `0.5px solid ${c.border}`, padding: '2rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', background: '#faf8f2', flexWrap: 'wrap' }}>
-        <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, whiteSpace: 'nowrap' }}>Beta</span>
+        <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, whiteSpace: 'nowrap' }}>Archived</span>
         <span style={{ width: '1px', height: '16px', background: c.border, display: 'block', flexShrink: 0 }} />
         <p style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted, letterSpacing: '0.02em', lineHeight: 1.6 }}>
-          Allorca is currently in beta. Your data is encrypted and secure. This platform is for educational purposes only — paper trading only, do not invest real money.
+          This is an archived demo kept online as a portfolio piece. Paper trading only, with simulated data throughout. No real money, no real accounts, and nothing here is investment advice.
         </p>
       </div>
 
       {/* CTA STRIP */}
       <div className="cta-strip-mobile" style={{ background: c.green, padding: '4rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2rem' }}>
         <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.75rem, 4vw, 3rem)', color: c.cream, fontWeight: 400, letterSpacing: '-0.03em', maxWidth: '560px', lineHeight: 1.15 }}>
-          Ready to stop guessing and start{' '}<em style={{ fontStyle: 'italic', color: '#a8d4b8' }}>growing?</em>
+          Next.js, TypeScript, Prisma, and the Claude API. Here's{' '}<em style={{ fontStyle: 'italic', color: '#a8d4b8' }}>how it works.</em>
         </h2>
-        <Link href="/sign-up" style={{ background: c.cream, color: c.green, padding: '0.9rem 2.25rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
-          Get started free
-        </Link>
+        <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ background: c.cream, color: c.green, padding: '0.9rem 2.25rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
+          Read the code
+        </a>
       </div>
 
       {/* FOOTER */}
@@ -153,12 +166,12 @@ export default function Home() {
         <div className="grid-3" style={{ gap: '2rem', marginBottom: '2rem' }}>
           <div>
             <p style={{ fontFamily: serif, fontSize: '1.1rem', color: c.ink, marginBottom: '0.75rem' }}>Allorca</p>
-            <p style={{ fontSize: '0.85rem', color: c.inkMuted, lineHeight: 1.7 }}>AI-driven investment platform empowering smarter investing for everyone.</p>
+            <p style={{ fontSize: '0.85rem', color: c.inkMuted, lineHeight: 1.7 }}>An investing-education platform built in 2026, kept online as an archived portfolio demo.</p>
           </div>
           <div>
-            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Platform</p>
+            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Demo</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <Link href="/sign-up" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Get started</Link>
+              <Link href="/sign-up" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Try the demo</Link>
               <Link href="/sign-in" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
               <Link href="/education" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Learn</Link>
             </div>

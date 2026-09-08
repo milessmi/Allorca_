@@ -22,8 +22,9 @@ const sans = DM_Sans({
 })
 
 export const metadata = {
-  title: 'Allorca - Education-First Investing',
-  description: 'Personalized investing education for college students',
+  title: 'Allorca \u2014 Portfolio Demo',
+  description: 'An archived demo of Allorca, an investing-education platform built by Miles Smith in 2026. Not an active product.',
+  robots: { index: false, follow: false, nocache: true },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
