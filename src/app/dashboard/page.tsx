@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { PrismaClient } from '@prisma/client'
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
+import DemoBanner from '@/components/DemoBanner'
+import { DEMO_USER, DEMO_FIRST_NAME } from '@/lib/demo'
 
 const prisma = new PrismaClient()
 
@@ -16,20 +18,26 @@ const sans = 'var(--font-sans)'
 
 export default async function DashboardPage() {
   const { userId } = await auth()
-  const user = await currentUser()
-  if (!userId) redirect('/sign-in')
+  const isDemo = !userId
 
-  const dbUser = await prisma.user.findUnique({
-    where: { clerkId: userId },
-    include: { portfolios: { where: { isActive: true }, include: { positions: true } } },
-  })
-  if (!dbUser?.onboardingComplete) redirect('/onboarding')
+  // Signed out: render the archived demo instead of bouncing to sign-in.
+  const user = isDemo ? null : await currentUser()
+  const dbUser = isDemo
+    ? DEMO_USER
+    : await prisma.user.findUnique({
+        where: { clerkId: userId },
+        include: { portfolios: { where: { isActive: true }, include: { positions: true } } },
+      })
+  if (!isDemo && !dbUser?.onboardingComplete) redirect('/onboarding')
+  if (!dbUser) redirect('/onboarding')
 
   const portfolio = dbUser.portfolios[0]
   const portfolioLabel = dbUser.riskScore < 35 ? 'Conservative' : dbUser.riskScore > 65 ? 'Aggressive' : 'Balanced'
 
   return (
     <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, minHeight: '100vh' }}>
+
+      {isDemo && <DemoBanner />}
 
       {/* NAV */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)', borderBottom: `0.5px solid ${c.border}` }}>
@@ -41,7 +49,11 @@ export default async function DashboardPage() {
             ))}
           </nav>
         </div>
-        <UserButton afterSignOutUrl="/" />
+        {isDemo ? (
+          <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted }}>Demo</span>
+        ) : (
+          <UserButton afterSignOutUrl="/" />
+        )}
       </header>
 
       {/* PAGE HEADER */}
@@ -50,7 +62,7 @@ export default async function DashboardPage() {
           <span style={{ display: 'block', width: '16px', height: '1px', background: c.inkMuted }} />Overview
         </p>
         <h1 style={{ fontFamily: serif, fontSize: 'clamp(1.75rem, 4vw, 3rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, paddingBottom: '2rem' }}>
-          Welcome back, <em style={{ fontStyle: 'italic', color: c.green }}>{user?.firstName || 'Investor'}</em>
+          Welcome back, <em style={{ fontStyle: 'italic', color: c.green }}>{user?.firstName || DEMO_FIRST_NAME}</em>
         </h1>
       </div>
 

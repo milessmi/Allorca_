@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { UserButton } from '@clerk/nextjs'
+import { UserButton, useAuth } from '@clerk/nextjs'
 import Link from 'next/link'
+import DemoBanner from '@/components/DemoBanner'
+import { DEMO_PORTFOLIO, findDemoStock } from '@/lib/demo'
 
 const c = {
   cream: '#F5F2EB', ink: '#141410', inkSoft: '#4a4a44', inkMuted: '#8a8a80',
@@ -18,6 +20,8 @@ interface Position { id: string; symbol: string; quantity: number; averageCost: 
 interface Portfolio { id: string; totalValue: number; positions: Position[] }
 
 export default function PortfolioPage() {
+  const { isLoaded, isSignedIn } = useAuth()
+  const isDemo = isLoaded && !isSignedIn
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null)
   const [search, setSearch] = useState('')
   const [stock, setStock] = useState<Stock | null>(null)
@@ -29,7 +33,13 @@ export default function PortfolioPage() {
   const [tradeMessage, setTradeMessage] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { fetchPortfolio() }, [])
+  useEffect(() => {
+    if (!isLoaded) return
+    // Signed out: run entirely on fixture data. The /api routes stay behind
+    // auth so the Finnhub key is not exposed on a public page.
+    if (isDemo) { setPortfolio(structuredClone(DEMO_PORTFOLIO)); setLoading(false); return }
+    fetchPortfolio()
+  }, [isLoaded, isDemo])
 
   async function fetchPortfolio() {
     const res = await fetch('/api/portfolio')
@@ -41,6 +51,13 @@ export default function PortfolioPage() {
   async function searchStock() {
     if (!search.trim()) return
     setSearchLoading(true); setSearchError(''); setStock(null); setTradeMessage('')
+    if (isDemo) {
+      const found = findDemoStock(search)
+      if (found) setStock(found)
+      else setSearchError('This demo carries a fixed set of tickers. Try VTI, BND, SCHD, AAPL, MSFT or VOO.')
+      setSearchLoading(false)
+      return
+    }
     const res = await fetch(`/api/stocks?symbol=${search.trim()}`)
     const data = await res.json()
     if (data.error) { setSearchError('Stock not found. Try a valid ticker like AAPL or TSLA.') } else { setStock(data) }
@@ -49,6 +66,33 @@ export default function PortfolioPage() {
 
   async function executeTrade() {
     if (!stock || !portfolio) return
+
+    if (isDemo) {
+      const next = structuredClone(portfolio)
+      const existing = next.positions.find((p) => p.symbol === stock.symbol)
+      const cost = quantity * stock.price
+      if (action === 'buy') {
+        if (cost > next.totalValue) { setTradeMessage('Not enough paper cash for that trade.'); return }
+        next.totalValue -= cost
+        if (existing) {
+          const totalShares = existing.quantity + quantity
+          existing.averageCost = (existing.quantity * existing.averageCost + cost) / totalShares
+          existing.quantity = totalShares
+          existing.currentPrice = stock.price
+        } else {
+          next.positions.push({ id: `demo-${stock.symbol}`, symbol: stock.symbol, quantity, averageCost: stock.price, currentPrice: stock.price })
+        }
+      } else {
+        if (!existing || existing.quantity < quantity) { setTradeMessage(`You do not hold ${quantity} share${quantity > 1 ? 's' : ''} of ${stock.symbol}.`); return }
+        next.totalValue += cost
+        existing.quantity -= quantity
+        if (existing.quantity === 0) next.positions = next.positions.filter((p) => p.symbol !== stock.symbol)
+      }
+      setPortfolio(next)
+      setTradeMessage(`${action === 'buy' ? 'Bought' : 'Sold'} ${quantity} share${quantity > 1 ? 's' : ''} of ${stock.symbol} at $${stock.price.toFixed(2)}. Simulated in your browser, nothing is saved.`)
+      return
+    }
+
     setTradeLoading(true)
     const res = await fetch('/api/trade', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ symbol: stock.symbol, name: stock.name, quantity, price: stock.price, action }) })
     const data = await res.json()
@@ -65,6 +109,8 @@ export default function PortfolioPage() {
   return (
     <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, minHeight: '100vh' }}>
 
+      {isDemo && <DemoBanner note="Demo portfolio. Trades run in your browser only and reset on reload." />}
+
       {/* NAV */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)', borderBottom: `0.5px solid ${c.border}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -75,7 +121,11 @@ export default function PortfolioPage() {
             ))}
           </nav>
         </div>
-        <UserButton afterSignOutUrl="/" />
+        {isDemo ? (
+          <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted }}>Demo</span>
+        ) : (
+          <UserButton afterSignOutUrl="/" />
+        )}
       </header>
 
       {/* PAGE HEADER */}

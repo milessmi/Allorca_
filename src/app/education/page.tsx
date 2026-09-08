@@ -5,6 +5,8 @@ import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { getCoursesForUser } from '@/lib/courses'
 import AITutor from '@/components/AITutor'
+import DemoBanner from '@/components/DemoBanner'
+import { DEMO_USER } from '@/lib/demo'
 
 const prisma = new PrismaClient()
 
@@ -18,9 +20,11 @@ const sans = 'var(--font-sans)'
 
 export default async function EducationPage() {
   const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
-  const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } })
-  if (!dbUser?.onboardingComplete) redirect('/onboarding')
+  const isDemo = !userId
+
+  const dbUser = isDemo ? DEMO_USER : await prisma.user.findUnique({ where: { clerkId: userId } })
+  if (!isDemo && !dbUser?.onboardingComplete) redirect('/onboarding')
+  if (!dbUser) redirect('/onboarding')
 
   const recommendedCourses = getCoursesForUser({
     experienceLevel: dbUser.experienceLevel,
@@ -37,6 +41,8 @@ export default async function EducationPage() {
   return (
     <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, minHeight: '100vh' }}>
 
+      {isDemo && <DemoBanner />}
+
       {/* NAV */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)', borderBottom: `0.5px solid ${c.border}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -47,7 +53,11 @@ export default async function EducationPage() {
             ))}
           </nav>
         </div>
-        <UserButton afterSignOutUrl="/" />
+        {isDemo ? (
+          <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted }}>Demo</span>
+        ) : (
+          <UserButton afterSignOutUrl="/" />
+        )}
       </header>
 
       {/* PAGE HEADER */}
@@ -64,7 +74,7 @@ export default async function EducationPage() {
       {/* AI TUTOR */}
       <div style={{ padding: '2rem 1.5rem', borderBottom: `0.5px solid ${c.border}` }}>
         <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1.25rem' }}>AI tutor</p>
-        <AITutor />
+        <AITutor demo={isDemo} />
       </div>
 
       {/* RECOMMENDED COURSES */}

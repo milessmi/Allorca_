@@ -1,6 +1,7 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
+import { useUser, useAuth } from '@clerk/nextjs'
+import DemoBanner from '@/components/DemoBanner'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -25,9 +26,12 @@ const labelStyle = {
 
 export default function OnboardingPage() {
   const { user } = useUser()
+  const { isLoaded, isSignedIn } = useAuth()
+  const isDemo = isLoaded && !isSignedIn
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [isSaving, setIsSaving] = useState(false)
+  const [result, setResult] = useState<{ score: number; type: string } | null>(null)
   const [formData, setFormData] = useState({
     investmentGoal: '', timeHorizon: '', riskReaction: '', riskAttitude: '',
     fluctuationComfort: '', incomeStability: '', emergencyFund: '', investmentPercentage: '',
@@ -44,6 +48,16 @@ export default function OnboardingPage() {
 
   const handleSubmit = async () => {
     const riskScore = calculateRiskScore(formData)
+
+    // Signed out: score the survey in the browser and show the result.
+    // Nothing is written anywhere, and no account is involved.
+    if (isDemo) {
+      const type = riskScore < 35 ? 'CONSERVATIVE' : riskScore > 65 ? 'AGGRESSIVE' : 'BALANCED'
+      setResult({ score: riskScore, type })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     const response = await fetch('/api/onboarding', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...formData, riskScore, clerkId: user?.id, email: user?.emailAddresses[0]?.emailAddress }) })
     if (response.ok) router.push('/dashboard')
   }
@@ -52,13 +66,78 @@ export default function OnboardingPage() {
   const progressPct = (step / totalSteps) * 100
   const stepTitles = ['Investment Goals', 'Risk Tolerance', 'Financial Situation', 'Experience & Mindset']
 
+  if (result) {
+    const allocations: Record<string, { label: string; pct: number }[]> = {
+      CONSERVATIVE: [{ label: 'US Bonds', pct: 50 }, { label: 'Dividend stocks', pct: 25 }, { label: 'Broad ETFs', pct: 15 }, { label: 'Cash', pct: 10 }],
+      BALANCED:     [{ label: 'Broad ETFs', pct: 45 }, { label: 'US Bonds', pct: 30 }, { label: 'Dividend stocks', pct: 17 }, { label: 'Cash', pct: 8 }],
+      AGGRESSIVE:   [{ label: 'Growth stocks', pct: 45 }, { label: 'Broad ETFs', pct: 35 }, { label: 'US Bonds', pct: 12 }, { label: 'Cash', pct: 8 }],
+    }
+    const blurb: Record<string, string> = {
+      CONSERVATIVE: 'You scored below 35, so the algorithm weights capital preservation over growth: more bonds, less exposure to single stocks.',
+      BALANCED:     'You scored between 35 and 65, so the algorithm splits the difference between growth and ballast.',
+      AGGRESSIVE:   'You scored above 65, so the algorithm leans into growth and thins out the bond position.',
+    }
+
+    return (
+      <div style={{ minHeight: '100vh', background: c.cream, fontFamily: sans, fontWeight: 300 }}>
+        <DemoBanner note="Scored in your browser from your real answers. Nothing was saved." />
+
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', borderBottom: `0.5px solid ${c.border}` }}>
+          <Link href="/" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
+          <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted }}>Demo</span>
+        </header>
+
+        <div style={{ maxWidth: '640px', margin: '0 auto', padding: '3rem 1.5rem' }}>
+          <p style={{ fontFamily: mono, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'block', width: '16px', height: '1px', background: c.inkMuted }} />Your result
+          </p>
+          <h1 style={{ fontFamily: serif, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '2rem', color: c.ink }}>
+            You scored <em style={{ fontStyle: 'italic', color: c.green }}>{result.score}</em> out of 100
+          </h1>
+
+          <div style={{ background: c.green, padding: '2rem', borderRadius: '2px', marginBottom: '2rem' }}>
+            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(245,242,235,0.5)', marginBottom: '0.5rem' }}>Portfolio type</p>
+            <p style={{ fontFamily: serif, fontSize: '2rem', color: c.cream, letterSpacing: '-0.03em', marginBottom: '1rem' }}>{result.type}</p>
+            <p style={{ fontFamily: mono, fontSize: '0.78rem', color: 'rgba(245,242,235,0.65)', lineHeight: 1.7 }}>{blurb[result.type]}</p>
+          </div>
+
+          <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Suggested allocation</p>
+          <div style={{ border: `0.5px solid ${c.border}`, borderRadius: '2px', marginBottom: '2rem' }}>
+            {allocations[result.type].map((a, i) => (
+              <div key={a.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', padding: '0.9rem 1.25rem', borderTop: i === 0 ? 'none' : `0.5px solid ${c.border}` }}>
+                <span style={{ fontSize: '0.9rem', color: c.ink }}>{a.label}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: '0 0 60%' }}>
+                  <span style={{ flex: 1, height: '4px', background: c.greenPale, borderRadius: '2px', overflow: 'hidden' }}>
+                    <span style={{ display: 'block', height: '100%', width: `${a.pct}%`, background: c.green }} />
+                  </span>
+                  <span style={{ fontFamily: mono, fontSize: '0.75rem', color: c.inkSoft, minWidth: '2.5rem', textAlign: 'right' }}>{a.pct}%</span>
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <p style={{ fontSize: '0.85rem', color: c.inkSoft, lineHeight: 1.75, marginBottom: '2rem' }}>
+            That score came from the same function the live app used: everyone starts at 50, then nine of your answers move it up or down before it is clamped to 0-100 and bucketed. Paper trading only, and nothing here is investment advice.
+          </p>
+
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <Link href="/dashboard" style={{ flex: 1, minWidth: '180px', textAlign: 'center', padding: '0.9rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, borderRadius: '2px', textDecoration: 'none' }}>See the dashboard</Link>
+            <button onClick={() => { setResult(null); setStep(1) }} style={{ flex: 1, minWidth: '180px', padding: '0.9rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: 'white', color: c.inkSoft, border: `0.5px solid ${c.border}`, borderRadius: '2px', cursor: 'pointer' }}>Retake the survey</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: c.cream, fontFamily: sans, fontWeight: 300 }}>
+
+      {isDemo && <DemoBanner note="Live demo of the risk survey. Your answers are scored in your browser and never saved." />}
 
       {/* NAV */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', borderBottom: `0.5px solid ${c.border}`, background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 100 }}>
         <Link href="/" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
-        <button onClick={handleSaveForLater} disabled={isSaving} style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkMuted, background: 'none', border: 'none', cursor: 'pointer', opacity: isSaving ? 0.5 : 1 }}>
+        <button onClick={handleSaveForLater} disabled={isSaving} hidden={isDemo} style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkMuted, background: 'none', border: 'none', cursor: 'pointer', opacity: isSaving ? 0.5 : 1 }}>
           {isSaving ? 'Saving...' : 'Save & exit'}
         </button>
       </header>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { DEMO_OUTLINE, DEMO_CHAT } from '@/lib/demo'
 
 const c = {
   cream: '#F5F2EB',
@@ -35,15 +36,16 @@ const priorityColors: Record<string, { bg: string; text: string }> = {
   'advanced':     { bg: '#f0ece8', text: '#4a3020' },
 }
 
-export default function AITutor() {
-  const [outline, setOutline] = useState<OutlineStep[]>([])
-  const [outlineLoading, setOutlineLoading] = useState(true)
-  const [messages, setMessages] = useState<Message[]>([])
+export default function AITutor({ demo = false }: { demo?: boolean }) {
+  const [outline, setOutline] = useState<OutlineStep[]>(demo ? DEMO_OUTLINE : [])
+  const [outlineLoading, setOutlineLoading] = useState(!demo)
+  const [messages, setMessages] = useState<Message[]>(demo ? DEMO_CHAT : [])
   const [input, setInput] = useState('')
   const [chatLoading, setChatLoading] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (demo) return
     fetch('/api/ai-tutor', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -52,7 +54,7 @@ export default function AITutor() {
       .then((r) => r.json())
       .then((data) => { if (data.outline) setOutline(data.outline) })
       .finally(() => setOutlineLoading(false))
-  }, [])
+  }, [demo])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -64,6 +66,16 @@ export default function AITutor() {
     const updated = [...messages, userMsg]
     setMessages(updated)
     setInput('')
+
+    if (demo) {
+      setMessages([...updated, {
+        role: 'assistant',
+        content:
+          'The live tutor calls the Claude API with your portfolio and the lesson you are on. It is switched off in this archived demo so the endpoint is not left open, but the exchange above is a real one from when the app was running.',
+      }])
+      return
+    }
+
     setChatLoading(true)
 
     const res = await fetch('/api/ai-tutor', {

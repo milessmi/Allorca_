@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { getCourseById } from '@/lib/courses'
 import InteractiveQuiz from '@/components/InteractiveQuiz'
 import LessonContent from '@/components/LessonContent'
+import DemoBanner from '@/components/DemoBanner'
+import { DEMO_USER } from '@/lib/demo'
 import CourseProgress from '@/components/CourseProgress'
 
 const prisma = new PrismaClient()
@@ -23,9 +25,11 @@ type PageProps = { params: Promise<{ courseId: string }> }
 export default async function CoursePage(props: PageProps) {
   const params = await props.params
   const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
-  const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } })
-  if (!dbUser?.onboardingComplete) redirect('/onboarding')
+  const isDemo = !userId
+
+  const dbUser = isDemo ? DEMO_USER : await prisma.user.findUnique({ where: { clerkId: userId } })
+  if (!isDemo && !dbUser?.onboardingComplete) redirect('/onboarding')
+  if (!dbUser) redirect('/onboarding')
   const course = getCourseById(params.courseId)
   if (!course) notFound()
 
@@ -39,6 +43,8 @@ export default async function CoursePage(props: PageProps) {
   return (
     <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, minHeight: '100vh' }}>
 
+      {isDemo && <DemoBanner />}
+
       {/* NAV */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)', borderBottom: `0.5px solid ${c.border}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -49,7 +55,11 @@ export default async function CoursePage(props: PageProps) {
             ))}
           </nav>
         </div>
-        <UserButton afterSignOutUrl="/" />
+        {isDemo ? (
+          <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted }}>Demo</span>
+        ) : (
+          <UserButton afterSignOutUrl="/" />
+        )}
       </header>
 
       {/* COURSE HEADER */}
