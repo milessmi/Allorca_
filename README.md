@@ -1,51 +1,63 @@
-Allorca
-AI-powered investment education platform for first-time investors.
-Built for USC students and Gen Z users with no finance background. Allorca personalizes your learning path based on your risk profile — so you're not reading the same generic content as everyone else.
-🔗 Live: https://markets-app.vercel.app 
+# Allorca
 
-What It Does
-Most investment education platforms dump the same content on every user. Allorca is different — it starts by understanding you.
+**Archived.** An investing-education platform I designed and built in 2026. It is no longer an active product and is not accepting users. The deployment stays online as a portfolio piece, and this repo is here so the code can be read.
 
-Onboarding survey — 20 data points collected on your financial goals, risk tolerance, and experience level
-Risk scoring algorithm — processes your responses and assigns you one of three investor profiles
-Personalized curriculum — your profile unlocks a specific learning path across 15+ educational modules
-Progress tracking — quiz system tracks where you are and what you've completed
-AI insights (in progress) — Claude API integration for personalized portfolio commentary
+Demo: https://markets-app.vercel.app
 
+---
 
-Tech Stack
-LayerTechnologyFrontendNext.js 14, TypeScript, Tailwind CSSBackendNext.js API routesDatabaseSupabase (PostgreSQL)ORMPrismaAuthSupabase AuthAIClaude API (Anthropic)DeploymentVercel + GitHub CI/CD
+## What it was
 
-Features
+Most investment-education tools show every user the same content. Allorca started by profiling the user instead: a twelve-question onboarding survey fed a risk-scoring algorithm that sorted people into one of three investor profiles (Conservative, Balanced, Aggressive), and the profile determined which curriculum they saw and how their paper portfolio was allocated.
 
-Risk scoring engine — onboarding survey data processed through a custom algorithm to dynamically route users into Conservative, Moderate, or Aggressive investor profiles
-Authentication — full user auth via Supabase, session management across routes
-Educational quiz system — 15+ modules with progress tracking persisted to database
-Mobile-responsive UI — fully responsive across devices
-Continuous deployment — every push to main auto-deploys via Vercel
+Everything was simulated. Users started with $10,000 in paper money, real quotes came from Finnhub, and no real trades or real accounts were ever involved.
 
+## What's in here
 
-Running Locally
-bash# Clone the repo
+- **Risk scoring** — twelve survey responses reduced to a 0-100 risk score, mapped to a portfolio type. `src/app/api/onboarding/route.ts`
+- **Paper trading** — buy/sell against live quotes, with positions and cost basis tracked per portfolio. `src/app/api/trade/route.ts`, `src/app/api/stocks/route.ts`
+- **Education** — 4 courses, 7 lessons, quizzes, per-course progress persisted to the database. `src/lib/courses.ts`, `src/app/education/`
+- **AI tutor** — Claude Sonnet 4 answering questions in the context of the user's own portfolio and lesson. `src/app/api/ai-tutor/route.ts`
+- **Auth** — Clerk, with middleware protecting everything except the landing and sign-in routes. `src/middleware.ts`
+
+## Stack
+
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js 16 (App Router), React 19, TypeScript |
+| Styling | Tailwind CSS v4, inline styles on the landing page |
+| Backend | Next.js API routes |
+| Database | PostgreSQL via Prisma |
+| Auth | Clerk |
+| AI | Claude API (`claude-sonnet-4`) |
+| Market data | Finnhub |
+| Hosting | Vercel |
+
+## Running it locally
+
+```bash
 git clone https://github.com/milessmi/Allorca_.git
 cd Allorca_
-
-# Install dependencies
 npm install
-
-# Set up environment variables
-cp .env.example .env.local
-# Fill in your Supabase URL, anon key, and Anthropic API key
-
-# Run dev server
 npm run dev
-Open http://localhost:3000
+```
 
-Environment Variables
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+You'll need your own `.env.local`:
+
+```
+DATABASE_URL=
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
 ANTHROPIC_API_KEY=
+FINNHUB_API_KEY=
+```
 
-About
-Allorca is being developed through USC's Stevens Center for Innovation and is a candidate for the NSF Startup Grant. Initial user base targets non-finance USC students — currently at 50+ beta users.
-Built by Miles Smith — SWE Intern @ Luma Health, USC Human Biology + AI Minor.
+Then `npx prisma migrate dev` to set up the schema. Without keys the app builds but auth and the tutor won't run.
+
+## Background
+
+Built in 2026 while the project was going through USC's Stevens Center for Innovation. I wrote the application: the risk-scoring algorithm, the paper-trading engine, the curriculum system, the Claude integration, and the front end.
+
+The project continued under other people afterward, and the Allorca name belongs to them. This repo and its demo deployment are an archive of the version I shipped, kept for portfolio purposes only. Nothing here is investment advice.
+
+Built by Miles Smith.
