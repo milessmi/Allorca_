@@ -42,7 +42,7 @@ export default async function DashboardPage() {
       {/* NAV */}
       <header style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)', borderBottom: `0.5px solid ${c.border}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Link href="/" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
+          <Link href="/home" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
           <nav className="hide-mobile" style={{ display: 'flex', gap: '2rem' }}>
             {[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Portfolio', href: '/portfolio' }, { label: 'Learn', href: '/education' }].map(({ label, href }) => (
               <Link key={href} href={href} style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>{label}</Link>

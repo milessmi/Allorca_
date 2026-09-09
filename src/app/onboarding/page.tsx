@@ -83,7 +83,7 @@ export default function OnboardingPage() {
         <DemoBanner note="Scored in your browser from your real answers. Nothing was saved." />
 
         <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', borderBottom: `0.5px solid ${c.border}` }}>
-          <Link href="/" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
+          <Link href="/home" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
           <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted }}>Demo</span>
         </header>
 
@@ -136,7 +136,7 @@ export default function OnboardingPage() {
 
       {/* NAV */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', borderBottom: `0.5px solid ${c.border}`, background: 'rgba(245,242,235,0.92)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <Link href="/" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
+        <Link href="/home" style={{ fontFamily: serif, fontSize: '1.3rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
         <button onClick={handleSaveForLater} disabled={isSaving} hidden={isDemo} style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkMuted, background: 'none', border: 'none', cursor: 'pointer', opacity: isSaving ? 0.5 : 1 }}>
           {isSaving ? 'Saving...' : 'Save & exit'}
         </button>

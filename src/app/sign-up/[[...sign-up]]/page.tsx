@@ -14,7 +14,7 @@ export default function SignUpPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: c.cream, fontFamily: sans, fontWeight: 300, padding: '2rem 1.5rem' }}>
       <div style={{ maxWidth: '460px', textAlign: 'center' }}>
-        <Link href="/" style={{ fontFamily: serif, fontSize: '1.4rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
+        <Link href="/home" style={{ fontFamily: serif, fontSize: '1.4rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>Allorca</Link>
 
         <h1 style={{ fontFamily: serif, fontSize: '2rem', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.15, margin: '2rem 0 1rem', color: c.ink }}>
           Sign-ups are closed
@@ -27,7 +27,7 @@ export default function SignUpPage() {
 
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link href="/onboarding" style={{ padding: '0.9rem 1.75rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, borderRadius: '2px', textDecoration: 'none' }}>Take the survey</Link>
-          <Link href="/" style={{ padding: '0.9rem 1.75rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: 'white', color: c.inkSoft, border: `0.5px solid ${c.border}`, borderRadius: '2px', textDecoration: 'none' }}>View home page</Link>
+          <Link href="/home" style={{ padding: '0.9rem 1.75rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: 'white', color: c.inkSoft, border: `0.5px solid ${c.border}`, borderRadius: '2px', textDecoration: 'none' }}>View home page</Link>
         </div>
 
         <p style={{ fontFamily: mono, fontSize: '0.7rem', color: c.inkMuted, lineHeight: 1.7, marginTop: '2.5rem' }}>

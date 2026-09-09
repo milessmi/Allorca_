@@ -1,230 +1,71 @@
 import Link from 'next/link'
 
 const c = {
-  cream: '#F5F2EB',
-  ink: '#141410',
-  inkSoft: '#4a4a44',
-  inkMuted: '#8a8a80',
-  green: '#1C3D2B',
-  greenLight: '#2d6045',
-  greenPale: '#e8f0eb',
-  border: '#ddd9ce',
+  cream: '#F5F2EB', ink: '#141410', inkSoft: '#4a4a44', inkMuted: '#8a8a80',
+  green: '#1C3D2B', greenPale: '#e8f0eb', border: '#ddd9ce',
 }
-
 const serif = 'var(--font-serif)'
 const mono = 'var(--font-mono)'
 const sans = 'var(--font-sans)'
 
-export default function Home() {
+/**
+ * Interstitial. Everyone lands here before the app, however they arrive, so
+ * nobody meets the old product copy without knowing what they are looking at.
+ * The site itself lives at /home.
+ */
+export default function NoticePage() {
   return (
-    <div style={{ background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: c.cream, color: c.ink, fontFamily: sans, fontWeight: 300, display: 'flex', flexDirection: 'column' }}>
 
-      {/* DEMO NOTICE */}
-      <div style={{
-        background: c.ink, color: c.cream, padding: '0.7rem 1.5rem',
-        fontFamily: mono, fontSize: '0.72rem', lineHeight: 1.6, letterSpacing: '0.02em',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        gap: '0.5rem', flexWrap: 'wrap', textAlign: 'center',
-      }}>
-        <span>Portfolio demo. Built by Miles Smith in 2026. Not an active product and not accepting users.</span>
-        <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ color: c.cream, textDecoration: 'underline', textUnderlineOffset: '3px' }}>
-          View the source
-        </a>
-      </div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
+        <div style={{ maxWidth: '620px', width: '100%' }}>
 
-      {/* NAV */}
-      <nav style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '1.25rem 1.5rem',
-        background: 'rgba(245,242,235,0.88)', backdropFilter: 'blur(12px)',
-        borderBottom: `0.5px solid ${c.border}`,
-      }}>
-        <Link href="/" style={{ fontFamily: serif, fontSize: '1.4rem', letterSpacing: '-0.02em', color: c.ink, textDecoration: 'none' }}>
-          Allorca
-        </Link>
-        <div className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
-          <Link href="#how" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>How it works</Link>
-          <Link href="/education" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Learn</Link>
-          <Link href="/sign-in" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
-          <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1.25rem', borderRadius: '2px', textDecoration: 'none' }}>View code</a>
-        </div>
-        <div className="hide-desktop" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-  <Link href="/sign-in" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
-  <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, padding: '0.5rem 1rem', borderRadius: '2px', textDecoration: 'none' }}>View code</a>
-</div>
-      </nav>
-
-      {/* HERO */}
-      <section className="grid-hero">
-        <div className="border-right-mobile" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '5rem 2rem 3rem', borderRight: `0.5px solid ${c.border}` }}>
-          <p style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.green, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <p style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.green, marginBottom: '1.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{ display: 'block', width: '24px', height: '1px', background: c.green }} />
-            Education-first investing
+            Before you go in
           </p>
-          <h1 style={{ fontFamily: serif, fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', lineHeight: 1.08, letterSpacing: '-0.03em', marginBottom: '1.75rem', fontWeight: 400 }}>
-            Invest with{' '}<em style={{ fontStyle: 'italic', color: c.green }}>intention,</em>{' '}not guesswork.
+
+          <h1 style={{ fontFamily: serif, fontSize: 'clamp(2rem, 5vw, 3.25rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '2rem' }}>
+            This isn&rsquo;t a live product. It&rsquo;s a <em style={{ fontStyle: 'italic', color: c.green }}>preview of my work.</em>
           </h1>
-          <p style={{ fontSize: '1.05rem', color: c.inkSoft, maxWidth: '420px', lineHeight: 1.75, marginBottom: '2.5rem' }}>
-            Allorca builds you a personalized portfolio and teaches you exactly why — so you graduate knowing how to grow your wealth.
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-            <Link href="/onboarding" style={{ background: c.green, color: c.cream, padding: '0.85rem 2rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', display: 'inline-block' }}>
-              Take the survey
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem', fontSize: '1rem', color: c.inkSoft, lineHeight: 1.8, marginBottom: '2.5rem' }}>
+            <p>
+              Allorca was an investing-education platform I designed and built in 2026. I have since
+              moved on from it, and the name belongs to the people who carried it forward. What you are
+              about to open is the version I shipped, kept online so the work can be looked at.
+            </p>
+            <p>
+              Nothing here is running as a business. There are no accounts, no sign-ups and no way to
+              become a user. Everything is paper trading against simulated data, and none of it is
+              investment advice.
+            </p>
+            <p style={{ color: c.ink }}>
+              Go in and click around. The survey scores your real answers, the dashboard and courses are
+              open, and you can place a trade.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+            <Link href="/home" style={{ flex: 1, minWidth: '200px', textAlign: 'center', padding: '1rem 2rem', fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, borderRadius: '2px', textDecoration: 'none' }}>
+              Continue to the site
             </Link>
-            <Link href="#how" style={{ fontSize: '0.875rem', color: c.inkSoft, textDecoration: 'none', borderBottom: `1px solid ${c.border}`, paddingBottom: '2px' }}>
-              See how it works
+            <Link href="/onboarding" style={{ flex: 1, minWidth: '200px', textAlign: 'center', padding: '1rem 2rem', fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: 'white', color: c.inkSoft, border: `0.5px solid ${c.border}`, borderRadius: '2px', textDecoration: 'none' }}>
+              Skip to the survey
             </Link>
           </div>
-        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '3rem 2rem' }}>
-          <div style={{ background: c.green, padding: '2.5rem', borderRadius: '2px' }}>
-            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(245,242,235,0.5)', marginBottom: '1.25rem' }}>Sample portfolio — Conservative</p>
-            {[{ label: 'US Bonds', pct: 40 }, { label: 'ETFs', pct: 30 }, { label: 'Div. Stocks', pct: 20 }, { label: 'Cash', pct: 10 }].map(({ label, pct }) => (
-              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <span style={{ fontFamily: mono, fontSize: '0.78rem', color: 'rgba(245,242,235,0.7)', width: '80px' }}>{label}</span>
-                <div style={{ flex: 1, height: '4px', background: 'rgba(245,242,235,0.15)', borderRadius: '2px', overflow: 'hidden' }}>
-                  <div style={{ width: `${pct}%`, height: '100%', background: '#a8d4b8', borderRadius: '2px' }} />
-                </div>
-                <span style={{ fontFamily: mono, fontSize: '0.75rem', color: 'rgba(245,242,235,0.6)', width: '36px', textAlign: 'right' }}>{pct}%</span>
-              </div>
-            ))}
-            <div style={{ marginTop: '1.75rem', paddingTop: '1.25rem', borderTop: '0.5px solid rgba(245,242,235,0.15)', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(245,242,235,0.4)' }}>Paper portfolio</span>
-              <span style={{ fontFamily: serif, fontSize: '1.6rem', color: c.cream, letterSpacing: '-0.02em' }}>$10,000</span>
-            </div>
-            <p style={{ marginTop: '1rem', fontFamily: mono, fontSize: '0.7rem', color: 'rgba(245,242,235,0.3)', fontStyle: 'italic' }}>Your allocation is built from your onboarding survey.</p>
+          <div style={{ borderTop: `0.5px solid ${c.border}`, paddingTop: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+            <p style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted, letterSpacing: '0.02em', lineHeight: 1.7 }}>
+              Built by Miles Smith &middot; Next.js, TypeScript, Prisma, Claude API
+            </p>
+            <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.green, textDecoration: 'none', borderBottom: `1px solid ${c.greenPale}`, paddingBottom: '2px' }}>
+              Read the source &rarr;
+            </a>
           </div>
-        </div>
-      </section>
 
-      {/* FEATURES */}
-      <section className="grid-2" style={{ borderTop: `0.5px solid ${c.border}` }}>
-        {[
-          { num: '01', title: 'AI-built portfolios', body: 'Your risk profile, goals, and timeline shape a portfolio designed specifically for you — Conservative, Balanced, or Aggressive.', icon: <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /> },
-          { num: '02', title: 'Education that fits you', body: 'Lessons are curated to your portfolio type and experience level. You learn about what you own, not random finance theory.', icon: <path d="M2 20h20M4 20V10l8-6 8 6v10M10 20v-5h4v5" /> },
-          { num: '03', title: 'Paper trading first', body: 'Start with a simulated $10,000 portfolio. Practice making decisions in real market conditions before any real money is involved.', icon: <><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" /></> },
-          { num: '04', title: 'Built for students', body: 'Designed around your reality — irregular income, student loans, and a long time horizon are features, not problems to work around.', icon: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></> },
-        ].map(({ num, title, body, icon }, i) => (
-          <div key={num} style={{ padding: '3rem 2rem', borderRight: i % 2 === 0 ? `0.5px solid ${c.border}` : 'none', borderBottom: i < 2 ? `0.5px solid ${c.border}` : 'none' }}>
-            <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.12em', color: c.inkMuted, marginBottom: '1.5rem', display: 'block' }}>{num}</span>
-            <div style={{ width: '36px', height: '36px', background: c.greenPale, borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke={c.green} fill="none" strokeWidth="1.5">{icon}</svg>
-            </div>
-            <h3 style={{ fontFamily: serif, fontSize: '1.25rem', fontWeight: 400, marginBottom: '0.75rem', letterSpacing: '-0.02em' }}>{title}</h3>
-            <p style={{ fontSize: '0.9rem', color: c.inkSoft, lineHeight: 1.7 }}>{body}</p>
-          </div>
-        ))}
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section id="how" className="grid-how" style={{ borderTop: `0.5px solid ${c.border}` }}>
-        <div className="border-right-mobile" style={{ padding: '4rem 2rem', borderRight: `0.5px solid ${c.border}`, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <p style={{ fontFamily: mono, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ display: 'block', width: '16px', height: '1px', background: c.inkMuted }} />Process
-          </p>
-          <h2 style={{ fontFamily: serif, fontSize: '2.5rem', lineHeight: 1.15, letterSpacing: '-0.03em', fontWeight: 400 }}>From survey to strategy in minutes.</h2>
-        </div>
-        <div className="grid-2">
-          {[
-            { num: '01', title: 'Take the onboarding survey', body: 'Answer questions about your goals, risk comfort, and timeline. No finance background required.' },
-            { num: '02', title: 'Get your portfolio type', body: 'Allorca assigns you a Conservative, Balanced, or Aggressive portfolio based on your risk score.' },
-            { num: '03', title: 'Start learning', body: 'Curated lessons explain every asset class in your portfolio so you understand what you own and why.' },
-            { num: '04', title: 'Paper trade with confidence', body: 'Simulate trades with $10,000 of virtual capital and watch your decisions play out.' },
-          ].map(({ num, title, body }, i) => (
-            <div key={num} style={{ padding: '2.5rem 2rem', borderRight: i % 2 === 0 ? `0.5px solid ${c.border}` : 'none', borderBottom: i < 2 ? `0.5px solid ${c.border}` : 'none' }}>
-              <div style={{ fontFamily: serif, fontSize: '3rem', color: c.border, lineHeight: 1, marginBottom: '1rem', letterSpacing: '-0.04em' }}>{num}</div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '0.5rem' }}>{title}</h4>
-              <p style={{ fontSize: '0.875rem', color: c.inkSoft, lineHeight: 1.65 }}>{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* BETA DISCLAIMER */}
-      <div style={{ borderTop: `0.5px solid ${c.border}`, padding: '2rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', background: '#faf8f2', flexWrap: 'wrap' }}>
-        <span style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, whiteSpace: 'nowrap' }}>Archived</span>
-        <span style={{ width: '1px', height: '16px', background: c.border, display: 'block', flexShrink: 0 }} />
-        <p style={{ fontFamily: mono, fontSize: '0.72rem', color: c.inkMuted, letterSpacing: '0.02em', lineHeight: 1.6 }}>
-          This is an archived demo kept online as a portfolio piece. Paper trading only, with simulated data throughout. No real money, no real accounts, and nothing here is investment advice.
-        </p>
-      </div>
-
-      {/* OBSERVE THE DEMO */}
-      <div style={{ borderBottom: `0.5px solid ${c.border}` }}>
-        <div style={{ padding: '3.5rem 1.5rem 2rem' }}>
-          <p style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.green, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ display: 'block', width: '24px', height: '1px', background: c.green }} />
-            Observe the demo
-          </p>
-          <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.15, maxWidth: '620px', marginBottom: '1rem' }}>
-            The whole app is open. No account, nothing to sign up for.
-          </h2>
-          <p style={{ fontSize: '1rem', color: c.inkSoft, lineHeight: 1.75, maxWidth: '560px' }}>
-            Take the survey and watch the risk algorithm score your answers, or jump straight
-            into any part of the product and click around.
-          </p>
-        </div>
-
-        <div className="grid-3" style={{ borderTop: `0.5px solid ${c.border}` }}>
-          {[
-            { href: '/onboarding', label: 'Risk survey',   title: 'Take the survey',   body: 'Twelve questions, scored live in your browser by the same function the product used. Ends on your score, profile and allocation.' },
-            { href: '/dashboard',  label: 'Dashboard',     title: 'See a profile',     body: 'Risk score, portfolio type, discipline score and the survey answers behind them, for a sample Balanced investor.' },
-            { href: '/portfolio',  label: 'Paper trading', title: 'Place a trade',     body: 'Look up a ticker, buy or sell, and watch cash and unrealised P&L move. Simulated in your browser.' },
-          ].map(({ href, label, title, body }, i) => (
-            <Link key={href} href={href} className="border-right-mobile" style={{ display: 'block', padding: '2rem 1.5rem', textDecoration: 'none', color: c.ink, borderRight: i < 2 ? `0.5px solid ${c.border}` : 'none' }}>
-              <p style={{ fontFamily: mono, fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.9rem' }}>{label}</p>
-              <p style={{ fontFamily: serif, fontSize: '1.3rem', fontWeight: 400, marginBottom: '0.6rem' }}>{title}</p>
-              <p style={{ fontSize: '0.88rem', color: c.inkSoft, lineHeight: 1.7, marginBottom: '1.1rem' }}>{body}</p>
-              <span style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.green }}>Open &rarr;</span>
-            </Link>
-          ))}
-        </div>
-
-        <div style={{ borderTop: `0.5px solid ${c.border}`, padding: '1.25rem 1.5rem' }}>
-          <Link href="/education" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>
-            Or browse the courses and the AI tutor &rarr;
-          </Link>
         </div>
       </div>
-
-      {/* CTA STRIP */}
-      <div className="cta-strip-mobile" style={{ background: c.green, padding: '4rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2rem' }}>
-        <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.75rem, 4vw, 3rem)', color: c.cream, fontWeight: 400, letterSpacing: '-0.03em', maxWidth: '560px', lineHeight: 1.15 }}>
-          Next.js, TypeScript, Prisma, and the Claude API. Here's{' '}<em style={{ fontStyle: 'italic', color: '#a8d4b8' }}>how it works.</em>
-        </h2>
-        <a href="https://github.com/milessmi/Allorca_" target="_blank" rel="noopener noreferrer" style={{ background: c.cream, color: c.green, padding: '0.9rem 2.25rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
-          Read the code
-        </a>
-      </div>
-
-      {/* FOOTER */}
-      <footer style={{ borderTop: `0.5px solid ${c.border}`, padding: '2rem 1.5rem' }}>
-        <div className="grid-3" style={{ gap: '2rem', marginBottom: '2rem' }}>
-          <div>
-            <p style={{ fontFamily: serif, fontSize: '1.1rem', color: c.ink, marginBottom: '0.75rem' }}>Allorca</p>
-            <p style={{ fontSize: '0.85rem', color: c.inkMuted, lineHeight: 1.7 }}>An investing-education platform built in 2026, kept online as an archived portfolio demo.</p>
-          </div>
-          <div>
-            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Demo</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <Link href="/onboarding" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Take the survey</Link>
-              <Link href="/dashboard" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Dashboard</Link>
-              <Link href="/education" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Learn</Link>
-            </div>
-          </div>
-          <div>
-            <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Partnership</p>
-            <p style={{ fontSize: '0.85rem', color: c.inkSoft, lineHeight: 1.7 }}>USC Stevens Center for Innovation<br />Marshall School of Business</p>
-          </div>
-        </div>
-        <div style={{ paddingTop: '2rem', borderTop: `0.5px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <p style={{ fontFamily: mono, fontSize: '0.68rem', color: c.inkMuted, letterSpacing: '0.04em' }}>Built by Miles Smith · Co founders: Vaska Wysocki · Aaniya Ahuja</p>
-          <p style={{ fontFamily: mono, fontSize: '0.68rem', color: c.inkMuted }}>© {new Date().getFullYear()} Allorca</p>
-        </div>
-      </footer>
-
     </div>
   )
 }
