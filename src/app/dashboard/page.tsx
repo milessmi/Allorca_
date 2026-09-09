@@ -62,7 +62,11 @@ export default async function DashboardPage() {
           <span style={{ display: 'block', width: '16px', height: '1px', background: c.inkMuted }} />Overview
         </p>
         <h1 style={{ fontFamily: serif, fontSize: 'clamp(1.75rem, 4vw, 3rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.1, paddingBottom: '2rem' }}>
-          Welcome back, <em style={{ fontStyle: 'italic', color: c.green }}>{user?.firstName || DEMO_FIRST_NAME}</em>
+          {isDemo ? (
+            <>Viewing <em style={{ fontStyle: 'italic', color: c.green }}>{DEMO_FIRST_NAME}&rsquo;s</em> demo account</>
+          ) : (
+            <>Welcome back, <em style={{ fontStyle: 'italic', color: c.green }}>{user?.firstName || DEMO_FIRST_NAME}</em></>
+          )}
         </h1>
       </div>
 

@@ -69,7 +69,7 @@ export default function Home() {
             Allorca builds you a personalized portfolio and teaches you exactly why — so you graduate knowing how to grow your wealth.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-            <Link href="/sign-up" style={{ background: c.green, color: c.cream, padding: '0.85rem 2rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', display: 'inline-block' }}>
+            <Link href="/onboarding" style={{ background: c.green, color: c.cream, padding: '0.85rem 2rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', display: 'inline-block' }}>
               Try the demo
             </Link>
             <Link href="#how" style={{ fontSize: '0.875rem', color: c.inkSoft, textDecoration: 'none', borderBottom: `1px solid ${c.border}`, paddingBottom: '2px' }}>
@@ -171,8 +171,8 @@ export default function Home() {
           <div>
             <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Demo</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <Link href="/sign-up" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Try the demo</Link>
-              <Link href="/sign-in" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Sign in</Link>
+              <Link href="/onboarding" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Try the demo</Link>
+              <Link href="/dashboard" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Dashboard</Link>
               <Link href="/education" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Learn</Link>
             </div>
           </div>
