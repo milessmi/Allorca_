@@ -76,7 +76,7 @@ export default async function CoursePage(props: PageProps) {
 
       {/* PROGRESS TRACKER */}
       <div style={{ padding: '1.5rem', borderBottom: `0.5px solid ${c.border}` }}>
-        <CourseProgress courseId={course.id} courseName={course.title} lessons={course.lessons} />
+        <CourseProgress courseId={course.id} courseName={course.title} lessons={course.lessons} demo={isDemo} />
       </div>
 
       {/* LESSONS */}

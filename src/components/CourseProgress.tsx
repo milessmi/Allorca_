@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { DEMO_USER } from '@/lib/demo'
 import Link from 'next/link'
 
 const c = {
@@ -28,6 +29,7 @@ interface Props {
   courseId: string
   courseName: string
   lessons: Lesson[]
+  demo?: boolean
 }
 
 const TIERS = [
@@ -46,17 +48,20 @@ function getNextTier(score: number) {
   return TIERS.find((t) => t.min > score) ?? null
 }
 
-export default function CourseProgress({ courseId, courseName, lessons }: Props) {
+export default function CourseProgress({ courseId, courseName, lessons, demo = false }: Props) {
   const [started, setStarted] = useState(false)
   const [completedLessons, setCompletedLessons] = useState<Set<number>>(new Set())
   const [courseCompleted, setCourseCompleted] = useState(false)
-  const [disciplineScore, setDisciplineScore] = useState(0)
+  const [disciplineScore, setDisciplineScore] = useState(demo ? DEMO_USER.disciplineScore : 0)
   const [awardedPoints, setAwardedPoints] = useState(0)
   const [showCelebration, setShowCelebration] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!demo)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
+    // /api/progress is behind auth, so signed-out visitors track progress
+    // in local state only. It resets on reload, which is fine for a demo.
+    if (demo) return
     fetch('/api/progress')
       .then((r) => r.json())
       .then((data) => {
@@ -70,9 +75,13 @@ export default function CourseProgress({ courseId, courseName, lessons }: Props)
         setDisciplineScore(data.disciplineScore ?? 0)
       })
       .finally(() => setLoading(false))
-  }, [courseId, lessons.length])
+  }, [courseId, lessons.length, demo])
 
   async function saveProgress(newCompleted: Set<number>, finished: boolean) {
+    if (demo) {
+      if (finished) { setAwardedPoints(20); setShowCelebration(true) }
+      return
+    }
     setSaving(true)
     const progress = Math.round((newCompleted.size / lessons.length) * 100)
     const res = await fetch('/api/progress', {
