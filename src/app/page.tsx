@@ -70,7 +70,7 @@ export default function Home() {
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
             <Link href="/onboarding" style={{ background: c.green, color: c.cream, padding: '0.85rem 2rem', fontFamily: mono, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', borderRadius: '2px', textDecoration: 'none', display: 'inline-block' }}>
-              Try the demo
+              Take the survey
             </Link>
             <Link href="#how" style={{ fontSize: '0.875rem', color: c.inkSoft, textDecoration: 'none', borderBottom: `1px solid ${c.border}`, paddingBottom: '2px' }}>
               See how it works
@@ -151,6 +151,44 @@ export default function Home() {
         </p>
       </div>
 
+      {/* OBSERVE THE DEMO */}
+      <div style={{ borderBottom: `0.5px solid ${c.border}` }}>
+        <div style={{ padding: '3.5rem 1.5rem 2rem' }}>
+          <p style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: c.green, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ display: 'block', width: '24px', height: '1px', background: c.green }} />
+            Observe the demo
+          </p>
+          <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: 1.15, maxWidth: '620px', marginBottom: '1rem' }}>
+            The whole app is open. No account, nothing to sign up for.
+          </h2>
+          <p style={{ fontSize: '1rem', color: c.inkSoft, lineHeight: 1.75, maxWidth: '560px' }}>
+            Take the survey and watch the risk algorithm score your answers, or jump straight
+            into any part of the product and click around.
+          </p>
+        </div>
+
+        <div className="grid-3" style={{ borderTop: `0.5px solid ${c.border}` }}>
+          {[
+            { href: '/onboarding', label: 'Risk survey',   title: 'Take the survey',   body: 'Twelve questions, scored live in your browser by the same function the product used. Ends on your score, profile and allocation.' },
+            { href: '/dashboard',  label: 'Dashboard',     title: 'See a profile',     body: 'Risk score, portfolio type, discipline score and the survey answers behind them, for a sample Balanced investor.' },
+            { href: '/portfolio',  label: 'Paper trading', title: 'Place a trade',     body: 'Look up a ticker, buy or sell, and watch cash and unrealised P&L move. Simulated in your browser.' },
+          ].map(({ href, label, title, body }, i) => (
+            <Link key={href} href={href} className="border-right-mobile" style={{ display: 'block', padding: '2rem 1.5rem', textDecoration: 'none', color: c.ink, borderRight: i < 2 ? `0.5px solid ${c.border}` : 'none' }}>
+              <p style={{ fontFamily: mono, fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '0.9rem' }}>{label}</p>
+              <p style={{ fontFamily: serif, fontSize: '1.3rem', fontWeight: 400, marginBottom: '0.6rem' }}>{title}</p>
+              <p style={{ fontSize: '0.88rem', color: c.inkSoft, lineHeight: 1.7, marginBottom: '1.1rem' }}>{body}</p>
+              <span style={{ fontFamily: mono, fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.green }}>Open &rarr;</span>
+            </Link>
+          ))}
+        </div>
+
+        <div style={{ borderTop: `0.5px solid ${c.border}`, padding: '1.25rem 1.5rem' }}>
+          <Link href="/education" style={{ fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: c.inkSoft, textDecoration: 'none' }}>
+            Or browse the courses and the AI tutor &rarr;
+          </Link>
+        </div>
+      </div>
+
       {/* CTA STRIP */}
       <div className="cta-strip-mobile" style={{ background: c.green, padding: '4rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2rem' }}>
         <h2 style={{ fontFamily: serif, fontSize: 'clamp(1.75rem, 4vw, 3rem)', color: c.cream, fontWeight: 400, letterSpacing: '-0.03em', maxWidth: '560px', lineHeight: 1.15 }}>
@@ -171,7 +209,7 @@ export default function Home() {
           <div>
             <p style={{ fontFamily: mono, fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkMuted, marginBottom: '1rem' }}>Demo</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <Link href="/onboarding" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Try the demo</Link>
+              <Link href="/onboarding" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Take the survey</Link>
               <Link href="/dashboard" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Dashboard</Link>
               <Link href="/education" style={{ fontSize: '0.85rem', color: c.inkSoft, textDecoration: 'none' }}>Learn</Link>
             </div>

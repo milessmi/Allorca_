@@ -27,7 +27,7 @@ export default function SignUpPage() {
 
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link href="/onboarding" style={{ padding: '0.9rem 1.75rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: c.green, color: c.cream, borderRadius: '2px', textDecoration: 'none' }}>Take the survey</Link>
-          <Link href="/dashboard" style={{ padding: '0.9rem 1.75rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: 'white', color: c.inkSoft, border: `0.5px solid ${c.border}`, borderRadius: '2px', textDecoration: 'none' }}>Open the demo</Link>
+          <Link href="/" style={{ padding: '0.9rem 1.75rem', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', background: 'white', color: c.inkSoft, border: `0.5px solid ${c.border}`, borderRadius: '2px', textDecoration: 'none' }}>View home page</Link>
         </div>
 
         <p style={{ fontFamily: mono, fontSize: '0.7rem', color: c.inkMuted, lineHeight: 1.7, marginTop: '2.5rem' }}>
